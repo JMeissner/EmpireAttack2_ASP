@@ -1,0 +1,42 @@
+﻿.tile {
+    width: 75px;
+    height: 75px;
+    border: none;
+}
+
+.tile:hover {
+    transform: translate(5px, -5px);
+}
+
+.tile::selection {
+    border: none;
+}
+
+.tile:focus {
+    border: none;
+    outline: none;
+}
+
+.tileNormal {
+    background-color: #ecf0f1;
+}
+
+.tileWater {
+    background-color: #3498db;
+}
+
+.tileForest {
+    background-color: #27ae60;
+}
+
+.tileHills {
+    background-color: #f1c40f;
+}
+
+.tileUrban {
+    background-color: #c0392b;
+}
+
+.tileCapital {
+    background-color: #2c3e50;
+}

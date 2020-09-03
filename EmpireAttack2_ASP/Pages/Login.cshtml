@@ -1,0 +1,17 @@
+﻿@page
+@model EmpireAttack2_ASP.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+    <div>
+        <h1 class="display-4">Login</h1>
+        <input id="in_username" type="text" placeholder="Username" />
+        <br />
+        <input id="in_password" type="text" placeholder="Password" disabled />
+        <br />
+        <div id="factionButtons"></div>
+        <br />
+        <input id="btn_login" type="button" value="Login" />
+    </div>
