@@ -28,7 +28,7 @@
         public Tile(TileType type)
         {
             this.Faction = Faction.NONE;
-            this.Population = 0;
+            this.Population = 1;
             this.Type = type;
             this.Structure = Structure.None;
         }

@@ -11,6 +11,7 @@ namespace EmpireAttack2_ASP.Game
         MapBase map;
 
         private List<Faction> _faction;
+        private Dictionary<Faction, int> _freepopulation;
         public Game(int noOfFactions)
         {
             //Adds the number of specified factions
@@ -31,6 +32,32 @@ namespace EmpireAttack2_ASP.Game
                 map.SetTileToFaction(f, capitals[counter], capitals[counter + 1]);
                 counter = counter + 2;
             }
+
+            //setup free population of factions
+            _freepopulation = new Dictionary<Faction, int>();
+            foreach(Faction f in _faction)
+            {
+                _freepopulation.Add(f, 1);
+            }
+        }
+
+        public void AddFreePopulationToAll(int amount)
+        {
+            lock (_freepopulation)
+            {
+                foreach(Faction f in _freepopulation.Keys.ToList())
+                {
+                    _freepopulation[f] += amount;
+                }
+            }
+        }
+
+        public int GetFreePopulationFromFaction(Faction f)
+        {
+            lock (_freepopulation)
+            {
+                return _freepopulation[f];
+            }
         }
 
         public List<Faction> GetAllFactions()
@@ -41,6 +68,27 @@ namespace EmpireAttack2_ASP.Game
         public string GetSerializedMap()
         {
             return map.GetSerializedMap();
+        }
+
+        public bool AttackTile(int x, int y, Faction faction)
+        {
+            if(map.CanOccupyTile(faction, _freepopulation[faction], x, y))
+            {
+                map.OccupyTile(faction, _freepopulation[faction], x, y);
+                _freepopulation[faction] = 0;
+                return true;
+            }else if (map.CanAttackTile(x, y, faction))
+            {
+                map.AttackTile(x, y, _freepopulation[faction]);
+                _freepopulation[faction] = 0;
+                return true;
+            }
+            return false;
+        }
+
+        public Tile GetTileAtPosition(int x, int y)
+        {
+            return map.tileMap[x][y];
         }
     }
 }

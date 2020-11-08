@@ -16,6 +16,7 @@ namespace EmpireAttack2_ASP.Game
         public Timer FastTick;
         public Timer SlowTick;
         public const int SlowTimerMultiplier = 2;
+        public int NoOfPlayers;
 
         public Gamestate gamestate;
 
@@ -39,24 +40,65 @@ namespace EmpireAttack2_ASP.Game
 
         }
 
-        public void Initilize()
+        public void Initilize(int noOfPlayers)
         {
-            FastTick = new Timer(FastUpdate, null, 0, 1000);
-            SlowTick = new Timer(FastUpdate, null, 0, 1000 * SlowTimerMultiplier);
+            //Setup
             gamestate = Gamestate.Lobby;
-            game = new Game(2);
+            game = new Game(noOfPlayers);
+            NoOfPlayers = noOfPlayers;
             playerManager = new PlayerManager();
+
+            //Timers
+            FastTick = new Timer(FastUpdate, null, Timeout.Infinite, Timeout.Infinite);
+            SlowTick = new Timer(FastUpdate, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private void FastUpdate(object state)
         {
             //Add free population to factions and send changes
             //GameHub.Current.Clients.All.SendAsync("ReceiveBeat");
+            game.AddFreePopulationToAll(1);
+            foreach(Faction f in game.GetAllFactions())
+            {
+                GameHub.Current.Clients.Group(f.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(f));
+            }
         }
 
         private void SlowUpdate(object state)
         {
             //Do heavycomputing and send changed population on tiles
+        }
+
+        private void StartGame()
+        {
+            //Start Timers
+            FastTick.Change(0, 1000);
+            SlowTick.Change(0, 1000 * SlowTimerMultiplier);
+            //Set Gamestate
+            gamestate = Gamestate.InGame;
+        }
+
+        private void CheckStartGame()
+        {
+            if(playerManager.GetPlayers().Keys.Count == NoOfPlayers - 1)
+            {
+                StartGame();
+            }
+        }
+
+        private void EndGame()
+        {
+            FastTick.Change(Timeout.Infinite, Timeout.Infinite);
+            SlowTick.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+
+        //TODO: Check if capital and apply Overtake Enemy
+        public async Task AttackTile(int x, int y, string connectionID)
+        {
+            if(game.AttackTile(x, y, playerManager.GetFaction(connectionID))){
+                Tile t = game.GetTileAtPosition(x, y);
+                await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population);
+            }
         }
 
         public List<Faction> GetFactions()
@@ -72,6 +114,7 @@ namespace EmpireAttack2_ASP.Game
         public void AddPlayer(string connectionId, string nickname, string faction)
         {
             playerManager.AddPlayer(connectionId, nickname, faction);
+            CheckStartGame();
         }
 
         public void RemovePlayer(string connectionId)

@@ -45,4 +45,12 @@ function buildConnection() {
         mapDataToTileMap(mapData);
         loadGame();
     });
+
+    connection.on("Cl_FastTick", function (troops) {
+        updatePopulation(troops);
+    });
+
+    connection.on("Cl_TileUpdate", function (x, y, t_faction, t_population) {
+        updateTileData(x, y, t_faction, t_population);
+    });
 }

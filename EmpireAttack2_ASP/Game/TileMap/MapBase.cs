@@ -56,6 +56,20 @@ namespace EmpireAttack2_ASP.Game.TileMap
             return canOccupy;
         }
 
+        public bool CanAttackTile(int x, int y, Faction faction)
+        {
+            if(IsNeighbor(faction, x, y) && !tileMap[x][y].Faction.Equals(faction))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void AttackTile(int x, int y, int attackingForce)
+        {
+            tileMap[x][y].Population -= attackingForce;
+        }
+
         public int[] GetCapitals()
         {
             List<int> rList = new List<int>();
@@ -103,6 +117,7 @@ namespace EmpireAttack2_ASP.Game.TileMap
             return isconnected;
         }
 
+        //TODO: Apply modfiers for terrain
         public bool OccupyTile(Faction faction, int attackingForce, int x, int y)
         {
             int previousPop = tileMap[x][y].Population;

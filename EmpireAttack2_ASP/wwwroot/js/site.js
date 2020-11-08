@@ -9,6 +9,8 @@ var username = "";
 var gameMap = [];
 var tileMap = [];
 
+var mypopulation = 0;
+
 window.onload = function () {
     if (window.location.href == "https://localhost/") {
         
@@ -134,6 +136,8 @@ function tableCreate() {
             gameMap[i][j] = btn;
 
             td.style.border = 'none';
+
+            addTintToTile(i, j);
         }
     }
     parent.appendChild(tbl);
@@ -171,6 +175,31 @@ function mapDataToTileMap(mapData) {
 function gridClicked(event) {
     var coords = event.srcElement.id.split(':');
 
-    gameMap[coords[0]][coords[1]].style.backgroundColor = "#2980b9";
+    //gameMap[coords[0]][coords[1]].style.backgroundColor = "#2980b9";
     console.log(coords[0] + coords[1] + tileMap[coords[0]][coords[1]].TileType + tileMap[coords[0]][coords[1]].Faction + tileMap[coords[0]][coords[1]].Population);
+
+    connection.invoke("Sv_AttackTile", coords[0], coords[1]).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+function updatePopulation(newPop) {
+    document.getElementById("lb_troops").innerHTML = newPop;
+    mypopulation = newPop;
+}
+
+function addTintToTile(x, y) {
+    gameMap[x][y].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow");
+    switch (tileMap[x][y].Faction) {
+        case "Red": gameMap[x][y].classList.add("tileOverlayRed"); break;
+        case "Blue": gameMap[x][y].classList.add("tileOverlayBlue"); break;
+        default: break;
+    }
+}
+
+function updateTileData(x, y, f, p) {
+    tileMap[x][y].Faction = f;
+    tileMap[x][y].Population = p;
+
+    addTintToTile(x, y);
 }

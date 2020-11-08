@@ -1,8 +1,12 @@
-﻿.tile {
+﻿/*BASE*/
+
+.tile {
     width: 50px;
     height: 50px;
     border: none;
 }
+
+/*ACTIONS*/
 
 .tile:hover {
     transform: translate(5px, -5px);
@@ -16,6 +20,8 @@
     border: none;
     outline: none;
 }
+
+/*TILETYPES*/
 
 .tileNormal {
     background-color: #ecf0f1;
@@ -39,4 +45,24 @@
 
 .tileCapital {
     background-color: #2c3e50;
+}
+
+
+/*OVERLAYS*/
+
+.tileOverlayRed {
+    box-shadow: 0 300px rgba(255, 0, 0, 0.6) inset;
+}
+
+.tileOverlayBlue {
+    box-shadow: 0 300px rgba(0, 0, 255, 0.6) inset;
+}
+
+.tileOverlayGreen {
+    box-shadow: 0 300px rgba(0, 255, 0, 0.6) inset;
+}
+
+.tileOverlayYellow {
+    background-color: #ffd800;
+    opacity: 0.6;
 }

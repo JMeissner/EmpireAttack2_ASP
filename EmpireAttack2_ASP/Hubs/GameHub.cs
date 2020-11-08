@@ -35,6 +35,13 @@ namespace EmpireAttack2_ASP.Hubs
             await Clients.Caller.SendAsync("DownloadMap", GameManager.Instance.GetSerializedMap());
         }
 
+        public async Task Sv_AttackTile(string x, string y)
+        {
+            int intx = int.Parse(x);
+            int inty = int.Parse(y);
+            await GameManager.Instance.AttackTile(intx, inty, Context.ConnectionId);
+        }
+
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             GameManager.Instance.RemovePlayer(Context.ConnectionId);
