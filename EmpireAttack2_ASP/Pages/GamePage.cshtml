@@ -8,25 +8,17 @@
         <link rel="stylesheet" href="~/css/tilemap.css" />
     </head>
 <h1 class="display-4">Game</h1>
-<p>Username: </p>
+@*<p>Username: </p>
 <p id="lb_Username"></p>
 <br />
 <p>Faction: </p>
-<p id="lb_Faction"></p>
+<p id="lb_Faction"></p>*@
 <div id="viewport">
 </div>
 
+<p>Username: <strong id="lb_Username"></strong>, Faction: <strong id="lb_Faction"></strong></p>
 
 
-@*<script type="text/javascript">
-  $(function() {
-	// Set drag scroll on first descendant of class dragger on both selected elements
-	$('#viewport, #inner').
-		dragscrollable({dragSelector: '.dragger:first', acceptPropagatedEvent: false});
-
-  });
-
-</script>*@
 
 <style>
 
@@ -35,8 +27,8 @@
         border: 1px solid #777;
         background: white;
         width: 960px;
-        height: 540px;
-        overflow: auto;
+        height: 960px;
+        overflow: hidden;
     }
 
     #tableParent {
