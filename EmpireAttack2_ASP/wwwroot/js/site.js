@@ -93,15 +93,19 @@ function createButton(name) {
 }
 
 function tableCreate() {
-    var parent = document.getElementById("tableParent");
+    var parent = document.getElementById("viewport");
     var tbl = document.createElement('table');
     tbl.style.border = 'none';
+    tbl.style.position = 'relative';
+    tbl.classList.add("dragger");
+    var maxX = tileMap.length;
+    var maxY = tileMap[0].length;
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < maxX; i++) {
         var tr = tbl.insertRow();
         gameMap.push([]);
-        gameMap[i].push(new Array(10));
-        for (var j = 0; j < 10; j++) {
+        gameMap[i].push(new Array(maxY));
+        for (var j = 0; j < maxY; j++) {
 
             var td = tr.insertCell();
 
@@ -133,6 +137,9 @@ function tableCreate() {
         }
     }
     parent.appendChild(tbl);
+    // Set drag scroll on first descendant of class dragger on both selected elements
+    $('#viewport, #inner').
+        dragscrollable({ dragSelector: '.dragger:first', acceptPropagatedEvent: true });
 }
 
 function mapDataToTileMap(mapData) {

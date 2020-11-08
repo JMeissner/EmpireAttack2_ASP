@@ -13,8 +13,34 @@
 <br />
 <p>Faction: </p>
 <p id="lb_Faction"></p>
-<div id="gameArea">
-    <button>Up</button>
-    <div id="tableParent"></div>
-    <button>Down</button>
+<div id="viewport">
 </div>
+
+
+
+@*<script type="text/javascript">
+  $(function() {
+	// Set drag scroll on first descendant of class dragger on both selected elements
+	$('#viewport, #inner').
+		dragscrollable({dragSelector: '.dragger:first', acceptPropagatedEvent: false});
+
+  });
+
+</script>*@
+
+<style>
+
+    #viewport {
+        position: relative; /* to enable further positioned divs inside content area */
+        border: 1px solid #777;
+        background: white;
+        width: 960px;
+        height: 540px;
+        overflow: auto;
+    }
+
+    #tableParent {
+        position: relative;
+        overflow: auto;
+    }
+</style>
