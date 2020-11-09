@@ -82,6 +82,9 @@ namespace EmpireAttack2_ASP.Game
                 map.AttackTile(x, y, _freepopulation[faction]);
                 _freepopulation[faction] = 0;
                 return true;
+            }else if(map.tileMap[x][y].Faction.Equals(faction)){
+                map.AddPopulation(x, y, _freepopulation[faction]);
+                return true;
             }
             return false;
         }

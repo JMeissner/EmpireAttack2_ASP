@@ -113,7 +113,7 @@ function tableCreate() {
 
             var btn = document.createElement("input");
             btn.type = "button";
-            btn.value = "" + i + "," + j;
+            btn.value = "" + tileMap[i][j].Population;
             btn.id = i + ":" + j;
             btn.onclick = function (event) {
                 gridClicked(event);
@@ -200,6 +200,8 @@ function addTintToTile(x, y) {
 function updateTileData(x, y, f, p) {
     tileMap[x][y].Faction = f;
     tileMap[x][y].Population = p;
+
+    gameMap[x][y].value = p;
 
     addTintToTile(x, y);
 }
