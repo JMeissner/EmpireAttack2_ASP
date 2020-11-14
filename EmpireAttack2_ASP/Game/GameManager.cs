@@ -6,6 +6,7 @@ using System.Threading;
 using EmpireAttack2_ASP.Game.TileMap;
 using EmpireAttack2_ASP.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using EmpireAttack2_ASP.Utils;
 
 namespace EmpireAttack2_ASP.Game
 {
@@ -50,7 +51,7 @@ namespace EmpireAttack2_ASP.Game
 
             //Timers
             FastTick = new Timer(FastUpdate, null, Timeout.Infinite, Timeout.Infinite);
-            SlowTick = new Timer(FastUpdate, null, Timeout.Infinite, Timeout.Infinite);
+            SlowTick = new Timer(SlowUpdate, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private void FastUpdate(object state)
@@ -67,6 +68,7 @@ namespace EmpireAttack2_ASP.Game
         private void SlowUpdate(object state)
         {
             //Do heavycomputing and send changed population on tiles
+            GameHub.Current.Clients.All.SendAsync("Cl_MapCompressedUpdate", GZIPCompress.Compress(game.UpdateTilePopulation()));
         }
 
         private void StartGame()
@@ -80,6 +82,7 @@ namespace EmpireAttack2_ASP.Game
 
         private void CheckStartGame()
         {
+            //TODO: CHANGE! TESTING ONLY
             if(playerManager.GetPlayers().Keys.Count == NoOfPlayers - 1)
             {
                 StartGame();
@@ -95,9 +98,11 @@ namespace EmpireAttack2_ASP.Game
         //TODO: Check if capital and apply Overtake Enemy
         public async Task AttackTile(int x, int y, string connectionID)
         {
-            if(game.AttackTile(x, y, playerManager.GetFaction(connectionID))){
+            Faction playerFaction = playerManager.GetFaction(connectionID);
+            if (game.AttackTile(x, y, playerFaction)){
                 Tile t = game.GetTileAtPosition(x, y);
                 await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population);
+                await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(playerFaction));
             }
         }
 

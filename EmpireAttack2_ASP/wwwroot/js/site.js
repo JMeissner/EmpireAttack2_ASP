@@ -205,3 +205,20 @@ function updateTileData(x, y, f, p) {
 
     addTintToTile(x, y);
 }
+
+function handleCompressedDelta(base64Data) {
+    //Decompress Data
+    var compressData = atob(base64Data);
+    compressData = compressData.split('').map(function (e) {
+        return e.charCodeAt(0);
+    });
+
+    var originalText = pako.ungzip(compressData, { to: "string" });
+
+    //Extract Tiledata and display it
+    var tileData = originalText.split(';');
+    for (var i = 0; i < tileData.length; i++) {
+        var _iTE = tileData[i].split(',');
+        updateTileData(_iTE[0], _iTE[1], _iTE[2], _iTE[3]);
+    }
+}

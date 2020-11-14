@@ -166,7 +166,43 @@ namespace EmpireAttack2_ASP.Game.TileMap
             tileMap[i][j].Population = 1;
         }
 
-        public int UpdateMapPopulation(int x, int y)
+        //public int UpdateMapPopulation(int x, int y)
+        //{
+        //    //BFS
+        //    //Connected + 1
+        //    //Unconnected - 1
+        //    Faction faction = tileMap[x][y].Faction;
+        //    int updatedTiles = 0;
+        //    _2DBFS bfs = new _2DBFS();
+        //    bfs.BFS(tileMap, x, y, 999999);
+
+        //    for (int i = 0; i < tileMap.Length; i++)
+        //    {
+        //        for (int j = 0; j < tileMap[0].Length; j++)
+        //        {
+        //            if (tileMap[i][j].Faction == faction)
+        //            {
+        //                updatedTiles++;
+        //                if (tileMap[i][j].IsConnected)
+        //                {
+        //                    tileMap[i][j].Population++;
+        //                }
+        //                else
+        //                {
+        //                    tileMap[i][j].Population--;
+        //                    if (tileMap[i][j].Population <= 0)
+        //                    {
+        //                        //TODO: Update Lost tiles
+        //                        tileMap[i][j].Faction = Faction.NONE;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return updatedTiles;
+        //}
+
+        public string UpdateMapPopulation(int x, int y)
         {
             //BFS
             //Connected + 1
@@ -176,6 +212,8 @@ namespace EmpireAttack2_ASP.Game.TileMap
             _2DBFS bfs = new _2DBFS();
             bfs.BFS(tileMap, x, y, 999999);
 
+            //stringbuilder
+            List<string> updatedTilesString = new List<string>();
             for (int i = 0; i < tileMap.Length; i++)
             {
                 for (int j = 0; j < tileMap[0].Length; j++)
@@ -196,10 +234,13 @@ namespace EmpireAttack2_ASP.Game.TileMap
                                 tileMap[i][j].Faction = Faction.NONE;
                             }
                         }
+                        string _t = "" + i + "," + j + "," + tileMap[i][j].Faction.ToString() + "," + tileMap[i][j].Population;
+                        updatedTilesString.Add(_t);
                     }
                 }
             }
-            return updatedTiles;
+            string concatTilesString = string.Join(";", updatedTilesString);
+            return concatTilesString;
         }
 
         public string GetSerializedMap()

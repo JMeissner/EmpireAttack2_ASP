@@ -84,6 +84,7 @@ namespace EmpireAttack2_ASP.Game
                 return true;
             }else if(map.tileMap[x][y].Faction.Equals(faction)){
                 map.AddPopulation(x, y, _freepopulation[faction]);
+                _freepopulation[faction] = 0;
                 return true;
             }
             return false;
@@ -93,5 +94,17 @@ namespace EmpireAttack2_ASP.Game
         {
             return map.tileMap[x][y];
         }
+
+        public string UpdateTilePopulation()
+        {
+            int[] capCoords = map.GetCapitals();
+            List<string> tiles = new List<string>();
+            for(int i = 0; i < capCoords.Length; i += 2)
+            {
+                tiles.Add(map.UpdateMapPopulation(capCoords[i], capCoords[i + 1]));
+            }
+            return String.Join(";", tiles);
+        }
+
     }
 }

@@ -12,7 +12,7 @@
 
         bool OccupyTile(Faction faction, int attackingForce, int x, int y);
 
-        int UpdateMapPopulation(int x, int y);
+        string UpdateMapPopulation(int x, int y);
 
         string GetSerializedMap();
 
