@@ -114,29 +114,10 @@ function tableCreate() {
 
             var td = tr.insertCell();
 
-            var btn = document.createElement("input");
-            btn.type = "button";
-            btn.value = "" + tileMap[i][j].Population;
-            btn.id = i + ":" + j;
-            btn.onclick = function (event) {
-                gridClicked(event);
-                //alert("Grid clicked:" + event.srcElement.id);
-            };
-            btn.removeAttribute("style");
-            btn.classList.add("tile");
+            var tileElem = createTileElement(i, j);
 
-            switch (tileMap[i][j].TileType) {
-                case "N": btn.classList.add("tileNormal"); break;
-                case "W": btn.classList.add("tileWater"); break;
-                case "F": btn.classList.add("tileForest"); break;
-                case "H": btn.classList.add("tileHills"); break;
-                case "U": btn.classList.add("tileUrban"); break;
-                case "C": btn.classList.add("tileCapital"); break;
-                default: btn.classList.add("tileNormal"); console.error("Error occurred loading gameMap - Unknown TileType"); break;
-            }
-
-            td.appendChild(btn);
-            gameMap[i][j] = btn;
+            td.appendChild(tileElem);
+            gameMap[i][j] = tileElem;
 
             td.style.border = 'none';
 
@@ -151,6 +132,62 @@ function tableCreate() {
 
 function scrollToCapital() {
     //$('#viewport').scrollTo('#' + capitalPosition);
+}
+
+function createTileElement(i, j) {
+
+    //Create Divs
+    var parentDiv = document.createElement("div");
+    parentDiv.classList.add("tileContainer");
+    parentDiv.id = i + ":" + j;
+    parentDiv.onclick = function (event) {
+        gridClicked(event);
+    };
+
+    var coinDiv = document.createElement("div");
+    coinDiv.classList.add("tileChild");
+
+    var tintDiv = document.createElement("div");
+    tintDiv.classList.add("tileChild");
+
+    var structureDiv = document.createElement("div");
+    structureDiv.classList.add("tileChild");
+
+    var tileDiv = document.createElement("div");
+    tileDiv.classList.add("tileChild");
+
+    var text = document.createElement("p");
+    text.innerHTML = "" + tileMap[i][j].Population;
+    text.classList.add("tileText");
+
+
+    switch (tileMap[i][j].TileType) {
+        case "N": tileDiv.classList.add("tileNormal"); break;
+        case "W": tileDiv.classList.add("tileWater"); break;
+        case "F": tileDiv.classList.add("tileForest"); break;
+        case "H": tileDiv.classList.add("tileHills"); break;
+        case "U": tileDiv.classList.add("tileUrban"); break;
+        case "C": tileDiv.classList.add("tileCapital"); break;
+        default: tileDiv.classList.add("tileNormal"); console.error("Error occurred loading gameMap - Unknown TileType"); break;
+    }
+    // </ Button setup >
+
+    //Z-Index
+    coinDiv.style.zIndex = "5";
+    tintDiv.style.zIndex = "4";
+    structureDiv.style.zIndex = "3";
+    tileDiv.style.zIndex = "2";
+    text.style.zIndex = "6";
+
+    //Append all created elements
+    // Structure: child[0] = coinDiv, child[1] = tintDiv, child[2] = structureDiv, child[3] = btn, child[4]
+    parentDiv.appendChild(coinDiv);
+    parentDiv.appendChild(tintDiv);
+    parentDiv.appendChild(structureDiv);
+    parentDiv.appendChild(tileDiv);
+    parentDiv.appendChild(text);
+
+    return parentDiv;
 }
 
 function mapDataToTileMap(mapData) {
@@ -184,6 +221,7 @@ function mapDataToTileMap(mapData) {
 }
 
 function gridClicked(event) {
+    console.log(event);
     var coords = event.srcElement.id.split(':');
 
     //gameMap[coords[0]][coords[1]].style.backgroundColor = "#2980b9";
@@ -200,10 +238,10 @@ function updatePopulation(newPop) {
 }
 
 function addTintToTile(x, y) {
-    gameMap[x][y].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow");
+    gameMap[x][y].children[1].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow");
     switch (tileMap[x][y].Faction) {
-        case "Red": gameMap[x][y].classList.add("tileOverlayRed"); break;
-        case "Blue": gameMap[x][y].classList.add("tileOverlayBlue"); break;
+        case "Red": gameMap[x][y].children[1].classList.add("tileOverlayRed"); break;
+        case "Blue": gameMap[x][y].children[1].classList.add("tileOverlayBlue"); break;
         default: break;
     }
 }
@@ -212,7 +250,7 @@ function updateTileData(x, y, f, p) {
     tileMap[x][y].Faction = f;
     tileMap[x][y].Population = p;
 
-    gameMap[x][y].value = p;
+    gameMap[x][y].children[4].innerHTML = p;
 
     addTintToTile(x, y);
 }
