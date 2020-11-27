@@ -11,6 +11,8 @@ var tileMap = [];
 
 var mypopulation = 0;
 
+var capitalPosition;
+
 window.onload = function () {
     if (window.location.href == "https://localhost/") {
         
@@ -71,6 +73,7 @@ function loadGame() {
         document.getElementById("lb_Username").innerHTML = Player.id;
         document.getElementById("lb_Faction").innerHTML = Player.faction;
         tableCreate();
+        scrollToCapital();
         $(".loader-wrapper").fadeOut("slow");
     });
 }
@@ -146,6 +149,10 @@ function tableCreate() {
         dragscrollable({ dragSelector: '.dragger:first', acceptPropagatedEvent: true });
 }
 
+function scrollToCapital() {
+    //$('#viewport').scrollTo('#' + capitalPosition);
+}
+
 function mapDataToTileMap(mapData) {
     //sizeX:sizeY#Data
     var sizeAndData = mapData.split('#');
@@ -166,6 +173,10 @@ function mapDataToTileMap(mapData) {
             _tile.Faction = tileComp[1];
             _tile.Population = tileComp[2];
             tileMap[i][j] = _tile;
+
+            if (_tile.TileType == "C" && _tile.Faction == faction) {
+                capitalPosition = i + ":" + j;
+            }
 
             counter++;
         }
