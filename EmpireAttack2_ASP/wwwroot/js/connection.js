@@ -50,8 +50,8 @@ function buildConnection() {
         updatePopulation(troops);
     });
 
-    connection.on("Cl_TileUpdate", function (x, y, t_faction, t_population) {
-        updateTileData(x, y, t_faction, t_population);
+    connection.on("Cl_TileUpdate", function (x, y, t_faction, t_population, t_coin) {
+        updateTileData(x, y, t_faction, t_population, t_coin);
     });
 
     connection.on("Cl_MapCompressedUpdate", function (compressedData) {

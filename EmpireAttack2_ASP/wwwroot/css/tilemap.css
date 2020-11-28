@@ -96,3 +96,23 @@
     background-color: #ffd800;
     opacity: 0.6;
 }
+
+/*COINS*/
+
+.coinBronze {
+    background-image: url("/Content/Images/Coin_Bronze.gif");
+    background-repeat: no-repeat;
+    background-size: 65% 65%;
+}
+
+.coinSilver {
+    background-image: url("/Content/Images/Coin_Silver.gif");
+    background-repeat: no-repeat;
+    background-size: 65% 65%;
+}
+
+.coinGold {
+    background-image: url("/Content/Images/Coin_Gold.gif");
+    background-repeat: no-repeat;
+    background-size: 65% 65%;
+}

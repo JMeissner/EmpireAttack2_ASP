@@ -253,7 +253,8 @@ namespace EmpireAttack2_ASP.Game.TileMap
                 {
                     string _t = tileMap[i][j].GetShortType() + ",";
                     _t += tileMap[i][j].Faction.ToString() + ",";
-                    _t += tileMap[i][j].Population.ToString();
+                    _t += tileMap[i][j].Population.ToString() + ",";
+                    _t += tileMap[i][j].Coin.ToString() + ",";
                     _tiles.Add(_t);
                 }
             }

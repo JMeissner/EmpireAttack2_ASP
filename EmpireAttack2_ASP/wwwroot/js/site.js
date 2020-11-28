@@ -32,7 +32,8 @@ function Player() {
 const Tile = {
     TileType: 'N',
     Population: 0,
-    Faction: 'None'
+    Faction: 'None',
+    Coin: 'None'
 }
 
 function loadLoginForm() {
@@ -209,6 +210,7 @@ function mapDataToTileMap(mapData) {
             _tile.TileType = tileComp[0];
             _tile.Faction = tileComp[1];
             _tile.Population = tileComp[2];
+            _tile.Coin = tileComp[3];
             tileMap[i][j] = _tile;
 
             if (_tile.TileType == "C" && _tile.Faction == faction) {
@@ -238,17 +240,24 @@ function updatePopulation(newPop) {
 }
 
 function addTintToTile(x, y) {
-    gameMap[x][y].children[1].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow");
+    gameMap[x][y].children[1].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow", "coinBronze", "coinSilver", "coinGold");
     switch (tileMap[x][y].Faction) {
         case "Red": gameMap[x][y].children[1].classList.add("tileOverlayRed"); break;
         case "Blue": gameMap[x][y].children[1].classList.add("tileOverlayBlue"); break;
         default: break;
     }
+    switch (tileMap[x][y].Coin) {
+        case "Bronze": gameMap[x][y].children[0].classList.add("coinBronze"); break;
+        case "Silver": gameMap[x][y].children[0].classList.add("coinSilver"); break;
+        case "Gold": gameMap[x][y].children[0].classList.add("coinGold"); break;
+        default: break;
+    }
 }
 
-function updateTileData(x, y, f, p) {
+function updateTileData(x, y, f, p, c) {
     tileMap[x][y].Faction = f;
     tileMap[x][y].Population = p;
+    tileMap[x][y].Coin = c;
 
     gameMap[x][y].children[4].innerHTML = p;
 

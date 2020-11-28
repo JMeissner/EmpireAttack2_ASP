@@ -101,7 +101,7 @@ namespace EmpireAttack2_ASP.Game
             Faction playerFaction = playerManager.GetFaction(connectionID);
             if (game.AttackTile(x, y, playerFaction)){
                 Tile t = game.GetTileAtPosition(x, y);
-                await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population);
+                await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population, t.Coin.ToString());
                 await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(playerFaction));
             }
         }
