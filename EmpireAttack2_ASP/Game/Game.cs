@@ -8,10 +8,10 @@ namespace EmpireAttack2_ASP.Game
 {
     public class Game
     {
-        MapBase map;
+        readonly MapBase map;
 
-        private List<Faction> _faction;
-        private Dictionary<Faction, int> _freepopulation;
+        private readonly List<Faction> _faction;
+        private readonly Dictionary<Faction, int> _freepopulation;
         public Game(int noOfFactions)
         {
             //Adds the number of specified factions
@@ -33,11 +33,44 @@ namespace EmpireAttack2_ASP.Game
                 counter = counter + 2;
             }
 
+            //Generate Coins on Tilemap
+            GenerateCoins(5, 70, 90);
+
             //setup free population of factions
             _freepopulation = new Dictionary<Faction, int>();
             foreach(Faction f in _faction)
             {
                 _freepopulation.Add(f, 1);
+            }
+        }
+
+        public void GenerateCoins(int coindivider, int lowerBound, int upperBound)
+        {
+            int _NoOfCoins = (int)Math.Ceiling(0.0d + map.tileMap.Length / coindivider) * (int)Math.Ceiling(0.0d + map.tileMap[0].Length / coindivider);
+            Random r = new Random();
+
+            for (int i = 0; i <= _NoOfCoins; i++)
+            {
+                int x = r.Next(0, map.tileMap.Length);
+                int y = r.Next(0, map.tileMap[0].Length);
+
+                int c = r.Next(0, 100);
+
+                if(c < lowerBound)
+                {
+                    //Bronze Coin
+                    map.SetCoinOnTile(x, y, Coin.Bronze);
+                }
+                else if(c < upperBound)
+                {
+                    //Silver Coin
+                    map.SetCoinOnTile(x, y, Coin.Silver);
+                }
+                else
+                {
+                    //Gold Coin
+                    map.SetCoinOnTile(x, y, Coin.Gold);
+                }
             }
         }
 

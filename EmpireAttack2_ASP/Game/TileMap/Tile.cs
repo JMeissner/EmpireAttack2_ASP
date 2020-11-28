@@ -5,7 +5,7 @@
         Normal, Forest, Hills, Urban, Water, Capital
     };
 
-    public enum Structure
+    public enum Coin
     {
         None, Bronze, Silver, Gold
     };
@@ -19,7 +19,7 @@
         public bool IsVisited { get; set; }
         public int Population { get; set; }
         public TileType Type { get; set; }
-        public Structure Structure { get; set; }
+        public Coin Coin { get; set; }
 
         #endregion Public Properties
 
@@ -30,15 +30,15 @@
             this.Faction = Faction.NONE;
             this.Population = 1;
             this.Type = type;
-            this.Structure = Structure.None;
+            this.Coin = Coin.None;
         }
 
-        public Tile(Faction faction, int population, TileType type, Structure structure)
+        public Tile(Faction faction, int population, TileType type, Coin coin)
         {
             this.Faction = faction;
             this.Population = population;
             this.Type = type;
-            this.Structure = Structure.None;
+            this.Coin = coin;
         }
 
         #endregion Public Constructors

@@ -261,6 +261,11 @@ namespace EmpireAttack2_ASP.Game.TileMap
             return _return;
         }
 
+        public void SetCoinOnTile(int x, int y, Coin coin)
+        {
+            tileMap[x][y].Coin = coin;
+        }
+
         #endregion Public Methods
     }
 }

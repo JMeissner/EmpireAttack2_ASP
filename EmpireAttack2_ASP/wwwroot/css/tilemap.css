@@ -81,7 +81,7 @@
 /*OVERLAYS*/
 
 .tileOverlayRed {
-    box-shadow: 0 300px rgba(255, 0, 0, 0.6) inset;
+    background-color: rgba(191, 63, 63, 0.62);
 }
 
 .tileOverlayBlue {

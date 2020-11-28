@@ -10,6 +10,8 @@
 
         void GetPopulation(Faction faction);
 
+        void SetCoinOnTile(int x, int y, Coin coin);
+
         bool OccupyTile(Faction faction, int attackingForce, int x, int y);
 
         string UpdateMapPopulation(int x, int y);
