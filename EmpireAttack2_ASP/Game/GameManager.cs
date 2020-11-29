@@ -96,10 +96,10 @@ namespace EmpireAttack2_ASP.Game
         }
 
         //TODO: Check if capital and apply Overtake Enemy
-        public async Task AttackTile(int x, int y, string connectionID)
+        public async Task AttackTile(int x, int y, bool halfPopulation, string connectionID)
         {
             Faction playerFaction = playerManager.GetFaction(connectionID);
-            if (game.AttackTile(x, y, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None)){
+            if (game.AttackTile(x, y, halfPopulation, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None)){
                 //Normal Attack
                 Tile t = game.GetTileAtPosition(x, y);
                 await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population, t.Coin.ToString());

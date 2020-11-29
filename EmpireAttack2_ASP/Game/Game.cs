@@ -103,21 +103,31 @@ namespace EmpireAttack2_ASP.Game
             return map.GetSerializedMap();
         }
 
-        public bool AttackTile(int x, int y, Faction faction)
+        public bool AttackTile(int x, int y, bool halfPopulation, Faction faction)
         {
-            if(map.CanOccupyTile(faction, _freepopulation[faction], x, y))
+            int attackingPopulation;
+            if (halfPopulation)
             {
-                map.OccupyTile(faction, _freepopulation[faction], x, y);
-                _freepopulation[faction] = 0;
+                attackingPopulation = (int)Math.Floor(0.0d + _freepopulation[faction] / 2);
+            }
+            else
+            {
+                attackingPopulation = _freepopulation[faction];
+            }
+
+            if(map.CanOccupyTile(faction, attackingPopulation, x, y))
+            {
+                map.OccupyTile(faction, attackingPopulation, x, y);
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
                 return true;
             }else if (map.CanAttackTile(x, y, faction))
             {
-                map.AttackTile(x, y, _freepopulation[faction]);
-                _freepopulation[faction] = 0;
+                map.AttackTile(x, y, attackingPopulation);
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
                 return true;
             }else if(map.tileMap[x][y].Faction.Equals(faction)){
-                map.AddPopulation(x, y, _freepopulation[faction]);
-                _freepopulation[faction] = 0;
+                map.AddPopulation(x, y, attackingPopulation);
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
                 return true;
             }
             return false;

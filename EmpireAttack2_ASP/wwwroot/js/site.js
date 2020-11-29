@@ -13,6 +13,8 @@ var mypopulation = 0;
 
 var capitalPosition;
 
+var shiftDown = false;
+
 window.onload = function () {
     if (window.location.href == "https://localhost/") {
         
@@ -23,6 +25,18 @@ window.onload = function () {
     //Load Login form with JQuery
     this.loadLoginForm();
 }
+
+window.addEventListener('keydown', (e) => {
+    if (!e.repeat && e.key == "Shift") {
+        shiftDown = true;
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (e.key == "Shift") {
+        shiftDown = false;
+    }
+});
 
 function Player() {
     this.id = "";
@@ -229,7 +243,7 @@ function gridClicked(event) {
     //gameMap[coords[0]][coords[1]].style.backgroundColor = "#2980b9";
     console.log(coords[0] + coords[1] + tileMap[coords[0]][coords[1]].TileType + tileMap[coords[0]][coords[1]].Faction + tileMap[coords[0]][coords[1]].Population);
 
-    connection.invoke("Sv_AttackTile", coords[0], coords[1]).catch(function (err) {
+    connection.invoke("Sv_AttackTile", coords[0], coords[1], shiftDown).catch(function (err) {
         return console.error(err.toString());
     });
 }
