@@ -230,17 +230,28 @@ namespace EmpireAttack2_ASP.Game.TileMap
                             tileMap[i][j].Population--;
                             if (tileMap[i][j].Population <= 0)
                             {
-                                //TODO: Update Lost tiles
                                 tileMap[i][j].Faction = Faction.NONE;
                             }
                         }
-                        string _t = "" + i + "," + j + "," + tileMap[i][j].Faction.ToString() + "," + tileMap[i][j].Population;
+                        string _t = "" + i + "," + j + "," + tileMap[i][j].Faction.ToString() + "," + tileMap[i][j].Population + "," + tileMap[i][j].Coin;
                         updatedTilesString.Add(_t);
                     }
                 }
             }
             string concatTilesString = string.Join(";", updatedTilesString);
             return concatTilesString;
+        }
+
+        public Tile[] GetTilesFromCoin(int x, int y)
+        {
+            _2DBFLS bfs = new _2DBFLS();
+            switch (tileMap[x][y].Coin)
+            {
+                case Coin.Bronze: return bfs.GetTilesInRadius(tileMap, x, y, 1);
+                case Coin.Silver: return bfs.GetTilesInRadius(tileMap, x, y, 2);
+                case Coin.Gold: return bfs.GetTilesInRadius(tileMap, x, y, 3);
+            }
+            return null;
         }
 
         public string GetSerializedMap()

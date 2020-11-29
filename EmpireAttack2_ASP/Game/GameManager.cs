@@ -68,7 +68,7 @@ namespace EmpireAttack2_ASP.Game
         private void SlowUpdate(object state)
         {
             //Do heavycomputing and send changed population on tiles
-            GameHub.Current.Clients.All.SendAsync("Cl_MapCompressedUpdate", GZIPCompress.Compress(game.UpdateTilePopulation()));
+            GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(game.UpdateTilePopulation()));
         }
 
         private void StartGame()
@@ -99,10 +99,20 @@ namespace EmpireAttack2_ASP.Game
         public async Task AttackTile(int x, int y, string connectionID)
         {
             Faction playerFaction = playerManager.GetFaction(connectionID);
-            if (game.AttackTile(x, y, playerFaction)){
+            if (game.AttackTile(x, y, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None)){
+                //Normal Attack
                 Tile t = game.GetTileAtPosition(x, y);
                 await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population, t.Coin.ToString());
                 await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(playerFaction));
+            }
+            else
+            {
+                //Tile has Coin on it -> Use Coin first
+                string updatedTiles = game.AttackTileWithCoin(x, y, playerFaction);
+                if(updatedTiles != null)
+                {
+                    await GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(updatedTiles));
+                }
             }
         }
 

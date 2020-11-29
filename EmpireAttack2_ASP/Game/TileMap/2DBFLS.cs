@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EmpireAttack2_ASP.Game.TileMap
 {
-    class _2DBFS
+    public class _2DBFLS
     {
         #region Private Fields
 
@@ -12,13 +14,12 @@ namespace EmpireAttack2_ASP.Game.TileMap
         private Queue<Point> queue;
 
         private Tile[][] workingCopyMap;
-        private Faction workingFaction;
 
         #endregion Private Fields
 
         #region Public Constructors
 
-        public _2DBFS()
+        public _2DBFLS()
         {
         }
 
@@ -26,9 +27,8 @@ namespace EmpireAttack2_ASP.Game.TileMap
 
         #region Public Methods
 
-        public void BFS(Tile[][] map, int x, int y, int limit)
+        public Tile[] GetTilesInRadius(Tile[][] map, int x, int y, int radius)
         {
-            workingFaction = map[x][y].Faction;
             maxX = map.Length;
             maxY = map[0].Length;
             //Reset Map
@@ -36,13 +36,12 @@ namespace EmpireAttack2_ASP.Game.TileMap
             {
                 for (int j = 0; j < map[0].Length; j++)
                 {
-                    if (map[i][j].Faction == workingFaction)
-                    {
                         map[i][j].IsConnected = false;
                         map[i][j].IsVisited = false;
-                    }
                 }
             }
+
+            List<Tile> tiles = new List<Tile>();
 
             //Init BFS
             workingCopyMap = map;
@@ -50,24 +49,30 @@ namespace EmpireAttack2_ASP.Game.TileMap
             map[x][y].IsConnected = true;
             map[x][y].IsVisited = true;
             GetNeighbors(x, y, map);
-            int counter = 0;
+            tiles.Add(map[x][y]);
             //BFS Loop
-            //No Counter due to large map sizes
-            while (queue.Any() /*&& counter < limit*/)
+            for (int i = 0; i < radius; i++)
             {
-                Point p = queue.Dequeue();
-                map[p.x][p.y].IsConnected = true;
-                map[p.x][p.y].IsVisited = true;
-                workingCopyMap = map;
-                GetNeighbors(p.x, p.y, map);
-                counter++;
+                Queue<Point> tempqueue = new Queue<Point>();
+                while (queue.Any())
+                {
+                    Point p = queue.Dequeue();
+                    map[p.x][p.y].IsVisited = true;
+                    tempqueue.Enqueue(p);
+                    tiles.Add(map[p.x][p.y]);
+                }
+                while (tempqueue.Any())
+                {
+                    Point p = tempqueue.Dequeue();
+                    GetNeighbors(p.x, p.y, map);
+                }
             }
             //CleanUp
             workingCopyMap = null;
-            workingFaction = Faction.NONE;
             maxX = 0;
             maxY = 0;
             queue = null;
+            return tiles.ToArray();
         }
 
         #endregion Public Methods
@@ -79,7 +84,7 @@ namespace EmpireAttack2_ASP.Game.TileMap
             //Up
             if (x + 1 < maxX)
             {
-                if (map[x + 1][y].Faction.Equals(workingFaction) && !map[x + 1][y].IsVisited && !queue.Contains(new Point(x + 1, y)))
+                if (!map[x + 1][y].IsVisited && !queue.Contains(new Point(x + 1, y)))
                 {
                     queue.Enqueue(new Point(x + 1, y));
                 }
@@ -87,7 +92,7 @@ namespace EmpireAttack2_ASP.Game.TileMap
             //Down
             if (x - 1 >= 0)
             {
-                if (map[x - 1][y].Faction.Equals(workingFaction) && !map[x - 1][y].IsVisited && !queue.Contains(new Point(x - 1, y)))
+                if (!map[x - 1][y].IsVisited && !queue.Contains(new Point(x - 1, y)))
                 {
                     queue.Enqueue(new Point(x - 1, y));
                 }
@@ -95,7 +100,7 @@ namespace EmpireAttack2_ASP.Game.TileMap
             //Right
             if (y + 1 < maxY)
             {
-                if (map[x][y + 1].Faction.Equals(workingFaction) && !map[x][y + 1].IsVisited && !queue.Contains(new Point(x, y + 1)))
+                if (!map[x][y + 1].IsVisited && !queue.Contains(new Point(x, y + 1)))
                 {
                     queue.Enqueue(new Point(x, y + 1));
                 }
@@ -103,7 +108,7 @@ namespace EmpireAttack2_ASP.Game.TileMap
             //Left
             if (y - 1 >= 0)
             {
-                if (map[x][y - 1].Faction.Equals(workingFaction) && !map[x][y - 1].IsVisited && !queue.Contains(new Point(x, y - 1)))
+                if (!map[x][y - 1].IsVisited && !queue.Contains(new Point(x, y - 1)))
                 {
                     queue.Enqueue(new Point(x, y - 1));
                 }

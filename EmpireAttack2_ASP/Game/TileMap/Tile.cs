@@ -13,7 +13,7 @@
     public class Tile
     {
         #region Public Properties
-
+        public Point Coordinates { get; set; }
         public Faction Faction { get; set; }
         public bool IsConnected { get; set; }
         public bool IsVisited { get; set; }
@@ -27,6 +27,14 @@
 
         public Tile(TileType type)
         {
+            this.Faction = Faction.NONE;
+            this.Population = 1;
+            this.Type = type;
+            this.Coin = Coin.None;
+        }
+        public Tile(TileType type, int i, int j)
+        {
+            this.Coordinates = new Point(i, j);
             this.Faction = Faction.NONE;
             this.Population = 1;
             this.Type = type;

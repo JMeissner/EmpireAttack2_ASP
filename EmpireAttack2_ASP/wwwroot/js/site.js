@@ -240,7 +240,8 @@ function updatePopulation(newPop) {
 }
 
 function addTintToTile(x, y) {
-    gameMap[x][y].children[1].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow", "coinBronze", "coinSilver", "coinGold");
+    gameMap[x][y].children[1].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow");
+    gameMap[x][y].children[0].classList.remove("coinBronze", "coinSilver", "coinGold");
     switch (tileMap[x][y].Faction) {
         case "Red": gameMap[x][y].children[1].classList.add("tileOverlayRed"); break;
         case "Blue": gameMap[x][y].children[1].classList.add("tileOverlayBlue"); break;
@@ -277,6 +278,6 @@ function handleCompressedDelta(base64Data) {
     var tileData = originalText.split(';');
     for (var i = 0; i < tileData.length; i++) {
         var _iTE = tileData[i].split(',');
-        updateTileData(_iTE[0], _iTE[1], _iTE[2], _iTE[3]);
+        updateTileData(_iTE[0], _iTE[1], _iTE[2], _iTE[3], _iTE[4]);
     }
 }

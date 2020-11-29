@@ -54,7 +54,7 @@ function buildConnection() {
         updateTileData(x, y, t_faction, t_population, t_coin);
     });
 
-    connection.on("Cl_MapCompressedUpdate", function (compressedData) {
+    connection.on("Cl_CompressedUpdate", function (compressedData) {
         handleCompressedDelta(compressedData);
     });
 }

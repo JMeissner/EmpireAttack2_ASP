@@ -123,6 +123,43 @@ namespace EmpireAttack2_ASP.Game
             return false;
         }
 
+        public string AttackTileWithCoin(int x, int y, Faction faction)
+        {
+            if(!map.IsNeighbor(faction, x, y))
+            {
+                return null;
+            }
+
+            List<string> tiles = new List<string>();
+            List<Tile> updatedTiles = new List<Tile>();
+            Queue<Tile[]> tileToProcess = new Queue<Tile[]>();
+            tileToProcess.Enqueue(map.GetTilesFromCoin(x, y));
+            map.SetCoinOnTile(x, y, Coin.None);
+
+            while (tileToProcess.Any())
+            {
+                foreach(Tile t in tileToProcess.Dequeue())
+                {
+                    //Tile has a coin on it
+                    if (!t.Coin.Equals(Coin.None))
+                    {
+                        tileToProcess.Enqueue(map.GetTilesFromCoin(t.Coordinates.x, t.Coordinates.y));
+                    }
+                    if (updatedTiles.Contains(t))
+                    {
+                        continue;
+                    }
+                    //Update Tile and add to list
+                    map.SetTileToFaction(faction, t.Coordinates.x, t.Coordinates.y);
+                    map.SetCoinOnTile(t.Coordinates.x, t.Coordinates.y, Coin.None);
+                    updatedTiles.Add(t);
+                    tiles.Add(t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString());
+                }
+            }
+
+            return String.Join(";", tiles);
+        }
+
         public Tile GetTileAtPosition(int x, int y)
         {
             return map.tileMap[x][y];
