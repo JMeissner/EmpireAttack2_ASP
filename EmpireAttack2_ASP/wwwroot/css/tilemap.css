@@ -54,19 +54,27 @@
 /*TILETYPES*/
 
 .tileNormal {
-    background-color: #ecf0f1;
+    /*background-color: #ecf0f1; */
+    background-image: url("/Content/Tiles/Normal_1.jpg");
+    background-size: 50px 50px;
 }
 
 .tileWater {
-    background-color: #3498db;
+    /*background-color: #3498db;*/
+    background-image: url("/Content/Tiles/Water_1.jpg");
+    background-size: 50px 50px;
 }
 
 .tileForest {
-    background-color: #27ae60;
+    /*background-color: #27ae60;*/
+    background-image: url("/Content/Tiles/Forest_1.jpg");
+    background-size: 50px 50px;
 }
 
 .tileHills {
-    background-color: #f1c40f;
+    /*background-color: #f1c40f;*/
+    background-image: url("/Content/Tiles/Mountains_1.jpg");
+    background-size: 50px 50px;
 }
 
 .tileUrban {
