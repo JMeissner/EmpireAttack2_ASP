@@ -55,5 +55,10 @@ namespace EmpireAttack2_ASP.Game
             return _players;
         }
 
+        public ConcurrentDictionary<string, Faction> GetFactions()
+        {
+            return _factions;
+        }
+
     }
 }

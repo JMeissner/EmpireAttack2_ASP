@@ -17,7 +17,7 @@ namespace EmpireAttack2_ASP.Game
         public Timer FastTick;
         public Timer SlowTick;
         public const int SlowTimerMultiplier = 2;
-        public int NoOfPlayers;
+        public int NoOfFactions;
 
         public Gamestate gamestate;
 
@@ -41,12 +41,12 @@ namespace EmpireAttack2_ASP.Game
 
         }
 
-        public void Initilize(int noOfPlayers)
+        public void Initilize(int noOfFactions)
         {
             //Setup
             gamestate = Gamestate.Lobby;
-            game = new Game(noOfPlayers);
-            NoOfPlayers = noOfPlayers;
+            game = new Game(noOfFactions);
+            NoOfFactions = noOfFactions;
             playerManager = new PlayerManager();
 
             //Timers
@@ -83,7 +83,7 @@ namespace EmpireAttack2_ASP.Game
         private void CheckStartGame()
         {
             //TODO: CHANGE! TESTING ONLY
-            if(playerManager.GetPlayers().Keys.Count == NoOfPlayers - 1)
+            if(playerManager.GetFactions().Values.Count == NoOfFactions - 1)
             {
                 StartGame();
             }
@@ -91,13 +91,26 @@ namespace EmpireAttack2_ASP.Game
 
         private void EndGame()
         {
+            //Set Game to end and stop Timers
+            gamestate = Gamestate.Ended;
             FastTick.Change(Timeout.Infinite, Timeout.Infinite);
             SlowTick.Change(Timeout.Infinite, Timeout.Infinite);
+
+            //Send Game Ended Message to Clients
+
+            //Start new Game
+            Initilize(NoOfFactions);
         }
 
         //TODO: Check if capital and apply Overtake Enemy
         public async Task AttackTile(int x, int y, bool halfPopulation, string connectionID)
         {
+            //Game is not running, should not accept input
+            if (!gamestate.Equals(Gamestate.InGame))
+            {
+                return;
+            }
+
             Faction playerFaction = playerManager.GetFaction(connectionID);
             if (game.AttackTile(x, y, halfPopulation, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None)){
                 //Normal Attack
