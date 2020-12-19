@@ -295,3 +295,13 @@ function handleCompressedDelta(base64Data) {
         updateTileData(_iTE[0], _iTE[1], _iTE[2], _iTE[3], _iTE[4]);
     }
 }
+
+function gameEnded(reason) {
+    $("#content").empty();
+
+    $("#content").load("GamePage", function () {
+        console.log("Game Ended");
+        document.getElementById("lb_Reason").innerHTML = reason;
+        document.getElementById("lb_Faction").innerHTML = Player.faction;
+    });
+}

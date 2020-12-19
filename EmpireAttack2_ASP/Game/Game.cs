@@ -46,14 +46,17 @@ namespace EmpireAttack2_ASP.Game
 
         public void GenerateCoins(int coindivider, int lowerBound, int upperBound)
         {
+            //Number of coins depends on mapsize and how many coins there should be per row/column
             int _NoOfCoins = (int)Math.Ceiling(0.0d + map.tileMap.Length / coindivider) * (int)Math.Ceiling(0.0d + map.tileMap[0].Length / coindivider);
             Random r = new Random();
 
             for (int i = 0; i <= _NoOfCoins; i++)
             {
+                //Random x and y coordinates
                 int x = r.Next(0, map.tileMap.Length);
                 int y = r.Next(0, map.tileMap[0].Length);
 
+                //Random coin which is determined by bounds
                 int c = r.Next(0, 100);
 
                 if(c < lowerBound)
@@ -105,15 +108,7 @@ namespace EmpireAttack2_ASP.Game
 
         public bool AttackTile(int x, int y, bool halfPopulation, Faction faction)
         {
-            int attackingPopulation;
-            if (halfPopulation)
-            {
-                attackingPopulation = (int)Math.Floor(0.0d + _freepopulation[faction] / 2);
-            }
-            else
-            {
-                attackingPopulation = _freepopulation[faction];
-            }
+            int attackingPopulation = GetAttackingForce(halfPopulation, faction);
 
             if(map.CanOccupyTile(faction, attackingPopulation, x, y))
             {
@@ -135,6 +130,7 @@ namespace EmpireAttack2_ASP.Game
 
         public string AttackTileWithCoin(int x, int y, Faction faction)
         {
+            //TODO: There is currently no check if the coin captures a captital
             if(!map.IsNeighbor(faction, x, y))
             {
                 return null;
@@ -170,9 +166,43 @@ namespace EmpireAttack2_ASP.Game
             return String.Join(";", tiles);
         }
 
+        public string AttackCapital(int x, int y, bool halfPopulation, Faction faction)
+        {
+            int attackPopulation = GetAttackingForce(halfPopulation, faction);
+            //Can overtake? Capture all enemy Tiles and remove faction from availables
+            if (CanOverTakeTile(x, y, halfPopulation, faction))
+            {
+                Faction removedFaction = GetTileAtPosition(x, y).Faction;
+                List<Tile> updatedTiles = map.OvertakeEnemyTiles(faction, removedFaction);
+                List<string> tiles = new List<string>();
+                foreach(Tile t in updatedTiles)
+                {
+                    tiles.Add(t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString());
+                }
+                _faction.Remove(removedFaction);
+                GameManager.Instance.GameEndedForFaction(removedFaction);
+                return String.Join(";", tiles);
+            }
+            //Can Attack? Just update the captital tile => Inefficient?
+            if(map.CanAttackTile(x, y, faction))
+            {
+                map.AttackTile(x, y, attackPopulation);
+                Tile t = GetTileAtPosition(x, y);
+                return t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString();
+            }
+            return null;
+        }
+
         public Tile GetTileAtPosition(int x, int y)
         {
             return map.tileMap[x][y];
+        }
+
+        public bool CanOverTakeTile(int x, int y, bool halfPopulation, Faction faction)
+        {
+            int attackingPopulation = GetAttackingForce(halfPopulation, faction);
+
+            return map.CanOccupyTile(faction, attackingPopulation, x, y);
         }
 
         public string UpdateTilePopulation()
@@ -184,6 +214,20 @@ namespace EmpireAttack2_ASP.Game
                 tiles.Add(map.UpdateMapPopulation(capCoords[i], capCoords[i + 1]));
             }
             return String.Join(";", tiles);
+        }
+
+        private int GetAttackingForce(bool halfPopulation, Faction faction)
+        {
+            int attackingPopulation;
+            if (halfPopulation)
+            {
+                attackingPopulation = (int)Math.Floor(0.0d + _freepopulation[faction] / 2);
+            }
+            else
+            {
+                attackingPopulation = _freepopulation[faction];
+            }
+            return attackingPopulation;
         }
 
     }

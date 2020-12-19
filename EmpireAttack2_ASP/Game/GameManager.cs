@@ -16,7 +16,9 @@ namespace EmpireAttack2_ASP.Game
         private static readonly object padLock = new object();
         public Timer FastTick;
         public Timer SlowTick;
+        public Timer GameTimer;
         public const int SlowTimerMultiplier = 2;
+        public const int GameTimeInMin = 5;
         public int NoOfFactions;
 
         public Gamestate gamestate;
@@ -52,6 +54,7 @@ namespace EmpireAttack2_ASP.Game
             //Timers
             FastTick = new Timer(FastUpdate, null, Timeout.Infinite, Timeout.Infinite);
             SlowTick = new Timer(SlowUpdate, null, Timeout.Infinite, Timeout.Infinite);
+            GameTimer = new Timer(GameTimerEnded, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         private void FastUpdate(object state)
@@ -71,11 +74,19 @@ namespace EmpireAttack2_ASP.Game
             GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(game.UpdateTilePopulation()));
         }
 
+        private void GameTimerEnded(object state)
+        {
+            //End Game because of Timer and restart a new one
+            GameHub.Current.Clients.All.SendAsync("Cl_GameEnded", "Game Timer has run out. Better luck next time. Your Faction: ");
+            EndGame();
+        }
+
         private void StartGame()
         {
             //Start Timers
             FastTick.Change(0, 1000);
             SlowTick.Change(0, 1000 * SlowTimerMultiplier);
+            GameTimer.Change(0, 1000 * GameTimeInMin * 60);
             //Set Gamestate
             gamestate = Gamestate.InGame;
         }
@@ -96,8 +107,6 @@ namespace EmpireAttack2_ASP.Game
             FastTick.Change(Timeout.Infinite, Timeout.Infinite);
             SlowTick.Change(Timeout.Infinite, Timeout.Infinite);
 
-            //Send Game Ended Message to Clients
-
             //Start new Game
             Initilize(NoOfFactions);
         }
@@ -112,7 +121,24 @@ namespace EmpireAttack2_ASP.Game
             }
 
             Faction playerFaction = playerManager.GetFaction(connectionID);
-            if (game.AttackTile(x, y, halfPopulation, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None)){
+
+            if(game.GetTileAtPosition(x, y).GetShortType().Equals("C"))
+            {
+                //Capital Tile => Apply overtake Enemy modifier and end game if needed or disable Faction
+                string updatedTiles = game.AttackCapital(x, y, halfPopulation, playerFaction);
+                if (updatedTiles != null)
+                {
+                    await GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(updatedTiles));
+                }
+                //A Faction won, all others have been eliminated
+                if(game.GetAllFactions().Count == 1)
+                {
+                    await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_GameEnded", "Your Faction won! You were part of: ");
+                    EndGame();
+                }
+            }
+            else if (game.AttackTile(x, y, halfPopulation, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None))
+            {
                 //Normal Attack
                 Tile t = game.GetTileAtPosition(x, y);
                 await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population, t.Coin.ToString());
@@ -157,6 +183,11 @@ namespace EmpireAttack2_ASP.Game
         public string GetSerializedMap()
         {
             return game.GetSerializedMap();
+        }
+
+        public async Task GameEndedForFaction(Faction faction)
+        {
+            await GameHub.Current.Clients.Group(faction.ToString()).SendAsync("Cl_GameEnded", "Your Faction was eliminated. You were part of: ");
         }
     }
 }

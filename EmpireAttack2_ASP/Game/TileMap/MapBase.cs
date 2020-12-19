@@ -131,8 +131,9 @@ namespace EmpireAttack2_ASP.Game.TileMap
             tileMap[x][y].Faction = faction;
         }
 
-        public void OvertakeEnemyTiles(Faction newf, Faction previous)
+        public List<Tile> OvertakeEnemyTiles(Faction newf, Faction previous)
         {
+            List<Tile> returnTiles = new List<Tile>();
             for (int i = 0; i < tileMap.Length; i++)
             {
                 for (int j = 0; j < tileMap[0].Length; j++)
@@ -140,9 +141,15 @@ namespace EmpireAttack2_ASP.Game.TileMap
                     if (tileMap[i][j].Faction.Equals(previous))
                     {
                         tileMap[i][j].Faction = newf;
+                        if (tileMap[i][j].Type.Equals(TileType.Capital))
+                        {
+                            tileMap[i][j].Type = TileType.Normal;
+                        }
+                        returnTiles.Add(tileMap[i][j]);
                     }
                 }
             }
+            return returnTiles;
         }
 
         public void RemoveCapitals()

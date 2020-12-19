@@ -57,4 +57,9 @@ function buildConnection() {
     connection.on("Cl_CompressedUpdate", function (compressedData) {
         handleCompressedDelta(compressedData);
     });
+
+    connection.on("Cl_GameEnded", function (reason) {
+        gameEnded(reason);
+        connection.stop();
+    });
 }
