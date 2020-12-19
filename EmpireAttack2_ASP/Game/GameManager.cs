@@ -86,7 +86,7 @@ namespace EmpireAttack2_ASP.Game
             //Start Timers
             FastTick.Change(0, 1000);
             SlowTick.Change(0, 1000 * SlowTimerMultiplier);
-            GameTimer.Change(0, 1000 * GameTimeInMin * 60);
+            GameTimer.Change(1000 * GameTimeInMin * 60, 1000 * GameTimeInMin * 60);
             //Set Gamestate
             gamestate = Gamestate.InGame;
         }
@@ -94,7 +94,7 @@ namespace EmpireAttack2_ASP.Game
         private void CheckStartGame()
         {
             //TODO: CHANGE! TESTING ONLY
-            if(playerManager.GetFactions().Values.Count == NoOfFactions - 1)
+            if(playerManager.GetFactions().Values.Count == NoOfFactions)
             {
                 StartGame();
             }

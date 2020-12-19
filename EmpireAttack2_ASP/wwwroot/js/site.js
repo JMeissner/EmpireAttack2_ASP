@@ -299,7 +299,7 @@ function handleCompressedDelta(base64Data) {
 function gameEnded(reason) {
     $("#content").empty();
 
-    $("#content").load("GamePage", function () {
+    $("#content").load("Results", function () {
         console.log("Game Ended");
         document.getElementById("lb_Reason").innerHTML = reason;
         document.getElementById("lb_Faction").innerHTML = Player.faction;
