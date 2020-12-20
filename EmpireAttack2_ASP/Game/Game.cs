@@ -1,6 +1,7 @@
 ﻿using EmpireAttack2_ASP.Game.TileMap;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,7 +23,8 @@ namespace EmpireAttack2_ASP.Game
             }
 
             //Load Map
-            map = new MapTextImport("/Maps/map_serialized.txt");
+            string mapPath = Path.Combine("Maps", "map_serialized.txt");
+            map = new MapTextImport(mapPath);
 
             //set capitals of factions
             int[] capitals = map.GetCapitals();

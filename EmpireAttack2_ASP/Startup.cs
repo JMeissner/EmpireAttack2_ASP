@@ -68,7 +68,7 @@ namespace EmpireAttack2_ASP
             GameHub.Current = app.ApplicationServices.GetService<IHubContext<GameHub>>();
 
             //Initialize the Game (No of Players hardcoded as 2 for testing)
-            GameManager.Instance.Initilize(2);
+            GameManager.Instance.Initilize(2, env.WebRootPath);
             System.Diagnostics.Debug.WriteLine("Initialization Completed.");
         }
     }

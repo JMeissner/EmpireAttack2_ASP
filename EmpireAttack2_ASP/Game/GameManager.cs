@@ -20,6 +20,7 @@ namespace EmpireAttack2_ASP.Game
         public const int SlowTimerMultiplier = 2;
         public const int GameTimeInMin = 5;
         public int NoOfFactions;
+        public string webRootPath;
 
         public Gamestate gamestate;
 
@@ -43,10 +44,11 @@ namespace EmpireAttack2_ASP.Game
 
         }
 
-        public void Initilize(int noOfFactions)
+        public void Initilize(int noOfFactions, string webContentPath)
         {
             //Setup
             gamestate = Gamestate.Lobby;
+            webRootPath = webContentPath;
             game = new Game(noOfFactions);
             NoOfFactions = noOfFactions;
             playerManager = new PlayerManager();
@@ -108,7 +110,7 @@ namespace EmpireAttack2_ASP.Game
             SlowTick.Change(Timeout.Infinite, Timeout.Infinite);
 
             //Start new Game
-            Initilize(NoOfFactions);
+            Initilize(NoOfFactions, webRootPath);
         }
 
         //TODO: Check if capital and apply Overtake Enemy
