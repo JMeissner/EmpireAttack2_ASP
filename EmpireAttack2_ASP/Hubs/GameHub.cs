@@ -42,6 +42,12 @@ namespace EmpireAttack2_ASP.Hubs
             await GameManager.Instance.AttackTile(intx, inty, halfPopulation, Context.ConnectionId);
         }
 
+        public async Task Sv_Chat(string msg)
+        {
+            string user = GameManager.Instance.GetNickNameFromPlayer(Context.ConnectionId);
+            await Clients.All.SendAsync("Cl_Chat", user, msg);
+        }
+
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             GameManager.Instance.RemovePlayer(Context.ConnectionId);

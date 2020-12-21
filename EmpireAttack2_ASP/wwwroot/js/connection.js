@@ -62,4 +62,16 @@ function buildConnection() {
         gameEnded(reason);
         connection.stop();
     });
+
+    connection.on("Cl_Chat", function (sender, msg) {
+
+    });
+
+    connection.on("Cl_PlayerConnected", function (name, faction) {
+
+    });
+
+    connection.on("Cl_PlayerDisconnected", function (name) {
+
+    });
 }

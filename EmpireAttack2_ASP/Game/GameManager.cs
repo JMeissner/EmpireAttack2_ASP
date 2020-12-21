@@ -182,6 +182,11 @@ namespace EmpireAttack2_ASP.Game
             return playerManager.GetFaction(connectionId).ToString();
         }
 
+        public string GetNickNameFromPlayer(string connectionId)
+        {
+            return playerManager.GetNickname(connectionId);
+        }
+
         public string GetSerializedMap()
         {
             return game.GetSerializedMap();
