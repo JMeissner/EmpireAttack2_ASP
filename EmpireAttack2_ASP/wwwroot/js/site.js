@@ -302,6 +302,6 @@ function gameEnded(reason) {
     $("#content").load("Results", function () {
         console.log("Game Ended");
         document.getElementById("lb_Reason").innerHTML = reason;
-        document.getElementById("lb_Faction").innerHTML = Player.faction;
+        document.getElementById("lb_Faction").innerHTML = faction;
     });
 }

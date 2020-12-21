@@ -108,6 +108,7 @@ namespace EmpireAttack2_ASP.Game
             gamestate = Gamestate.Ended;
             FastTick.Change(Timeout.Infinite, Timeout.Infinite);
             SlowTick.Change(Timeout.Infinite, Timeout.Infinite);
+            GameTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
             //Start new Game
             Initilize(NoOfFactions, webRootPath);
