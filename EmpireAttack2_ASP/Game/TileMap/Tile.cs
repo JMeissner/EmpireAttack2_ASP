@@ -41,6 +41,27 @@
             this.Coin = Coin.None;
         }
 
+        public Tile(TileType type, int i, int j, bool random)
+        {
+            System.Random r = new System.Random();
+
+            this.Coordinates = new Point(i, j);
+            this.Faction = Faction.NONE;
+            this.Type = type;
+            this.Coin = Coin.None;
+
+            switch (type)
+            {
+                case TileType.Normal: this.Population = 1; break;
+                case TileType.Capital: this.Population = 1; break;
+                case TileType.Urban: this.Population = r.Next(500, 3500); break;
+                case TileType.Hills: this.Population = r.Next(1250, 5000); break;
+                case TileType.Water: this.Population = r.Next(750, 2000); break;
+                case TileType.Forest: this.Population = r.Next(50, 150); break;
+                default: this.Population = 1; break;
+            }
+        }
+
         public Tile(Faction faction, int population, TileType type, Coin coin)
         {
             this.Faction = faction;

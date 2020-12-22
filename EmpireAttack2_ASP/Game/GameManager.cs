@@ -17,8 +17,8 @@ namespace EmpireAttack2_ASP.Game
         public Timer FastTick;
         public Timer SlowTick;
         public Timer GameTimer;
-        public const int SlowTimerMultiplier = 2;
-        public const int GameTimeInMin = 5;
+        public const int SlowTimerMultiplier = 5;
+        public const int GameTimeInMin = 10;
         public int NoOfFactions;
         public string webRootPath;
 
@@ -63,7 +63,7 @@ namespace EmpireAttack2_ASP.Game
         {
             //Add free population to factions and send changes
             //GameHub.Current.Clients.All.SendAsync("ReceiveBeat");
-            game.AddFreePopulationToAll(1);
+            game.AddFreePopulationToAll(30);
             foreach(Faction f in game.GetAllFactions())
             {
                 GameHub.Current.Clients.Group(f.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(f));

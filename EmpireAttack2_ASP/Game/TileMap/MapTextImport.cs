@@ -45,12 +45,12 @@ namespace EmpireAttack2_ASP.Game.TileMap
                 int j = int.Parse(_t[1]);
                 switch (_t[2])
                 {
-                    case "N": tileMap[i][j] = new Tile(TileType.Normal, i, j); break;
-                    case "W": tileMap[i][j] = new Tile(TileType.Water, i, j); break;
-                    case "F": tileMap[i][j] = new Tile(TileType.Forest, i, j); break;
-                    case "H": tileMap[i][j] = new Tile(TileType.Hills, i, j); break;
-                    case "U": tileMap[i][j] = new Tile(TileType.Urban, i, j); break;
-                    case "C": tileMap[i][j] = new Tile(TileType.Capital, i, j); break;
+                    case "N": tileMap[i][j] = new Tile(TileType.Normal, i, j, true); break;
+                    case "W": tileMap[i][j] = new Tile(TileType.Water, i, j, true); break;
+                    case "F": tileMap[i][j] = new Tile(TileType.Forest, i, j, true); break;
+                    case "H": tileMap[i][j] = new Tile(TileType.Hills, i, j, true); break;
+                    case "U": tileMap[i][j] = new Tile(TileType.Urban, i, j, true); break;
+                    case "C": tileMap[i][j] = new Tile(TileType.Capital, i, j, true); break;
                     default: throw new Exception("tiletype did not match (Import->Convert Shorttype to Tiletype)");
                 }
             }
