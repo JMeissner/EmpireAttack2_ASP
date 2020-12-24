@@ -71,7 +71,8 @@ namespace EmpireAttack2_ASP.Game
         {
             //Add free population to factions and send changes
             //GameHub.Current.Clients.All.SendAsync("ReceiveBeat");
-            game.AddFreePopulationToAll(30);
+            //game.AddFreePopulationToAll(30);
+            game.AddFreePopulationToForumla(25);
             foreach(Faction f in game.GetAllFactions())
             {
                 GameHub.Current.Clients.Group(f.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(f), TimeLeft());

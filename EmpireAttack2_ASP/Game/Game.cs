@@ -90,6 +90,17 @@ namespace EmpireAttack2_ASP.Game
             }
         }
 
+        public void AddFreePopulationToForumla(int amount)
+        {
+            lock (_freepopulation)
+            {
+                foreach (Faction f in _freepopulation.Keys.ToList())
+                {
+                    _freepopulation[f] += (amount + (int)Math.Floor(0.1 * ((_freepopulation[f] / 60) ^ 2)));
+                }
+            }
+        }
+
         public int GetFreePopulationFromFaction(Faction f)
         {
             lock (_freepopulation)

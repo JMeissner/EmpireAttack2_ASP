@@ -7,17 +7,24 @@
     <head>
         <link rel="stylesheet" href="~/css/tilemap.css" />
     </head>
-<h1 class="display-4">Game</h1>
-@*<p>Username: </p>
-<p id="lb_Username"></p>
-<br />
-<p>Faction: </p>
-<p id="lb_Faction"></p>*@
-<div id="viewport">
+<div id="gameViewSwitch">
+    <fieldset>
+        <input type="radio" id="mv" name="GameView" value="Map" checked>
+        <label for="mv"> Map</label>
+        <input type="radio" id="up" name="GameView" value="Upgrades">
+        <label for="up"> Upgrades</label>
+        <input type="radio" id="it" name="GameView" value="Items">
+        <label for="it"> Items</label>
+    </fieldset>
 </div>
-<p id="lb_Pop">Troops: <strong id="lb_troops"></strong></p>
-<p>Username: <strong id="lb_Username"></strong>, Faction: <strong id="lb_Faction"></strong></p>
-<p id="lb_Time">Time Left: <strong id="lb_timer"></strong></p>
+<div id="mapView">
+    <div id="viewport">
+    </div>
+    <p id="lb_Pop">Troops: <strong id="lb_troops"></strong></p>
+    <p>Username: <strong id="lb_Username"></strong>, Faction: <strong id="lb_Faction"></strong></p>
+    <p id="lb_Time">Time Left: <strong id="lb_timer"></strong></p>
+</div>
+
 
 
 
@@ -40,5 +47,9 @@
     #lb_Pop {
         margin-left: 800px;
         font-size: x-large;
+    }
+
+    fieldset {
+        display: inline;
     }
 </style>
