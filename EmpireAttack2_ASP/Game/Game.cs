@@ -212,6 +212,7 @@ namespace EmpireAttack2_ASP.Game
                         updatedTiles.Add(t);
                     }
                 }
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
                 return updatedTiles.ToArray();
             }
 

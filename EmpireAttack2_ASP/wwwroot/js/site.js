@@ -254,7 +254,7 @@ function updatePopulation(newPop) {
 }
 
 function updateTimer(time) {
-    document.getElementById("lb_timer").innerHTML = timer;
+    document.getElementById("lb_timer").innerHTML = time;
 }
 
 function addTintToTile(x, y) {
