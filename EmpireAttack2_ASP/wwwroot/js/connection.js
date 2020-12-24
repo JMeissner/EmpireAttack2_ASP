@@ -46,8 +46,9 @@ function buildConnection() {
         loadGame();
     });
 
-    connection.on("Cl_FastTick", function (troops) {
+    connection.on("Cl_FastTick", function (troops, time) {
         updatePopulation(troops);
+        updateTimer(time);
     });
 
     connection.on("Cl_TileUpdate", function (x, y, t_faction, t_population, t_coin) {

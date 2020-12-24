@@ -108,90 +108,134 @@ namespace EmpireAttack2_ASP.Game
             return map.GetSerializedMap();
         }
 
-        public bool AttackTile(int x, int y, bool halfPopulation, Faction faction)
+        /// <summary>
+        /// Returns a multiplier for attacking enemy tiles, based on neighboring tiles for that tile. The Multiplier is 2 ^ (noOfNeighbors - 1)
+        /// </summary>
+        /// <param name="x">X Coordinate of Tile to attack</param>
+        /// <param name="y">y Coordinate of Tile to attack</param>
+        /// <param name="faction">Faction of the attacking player</param>
+        /// <returns></returns>
+        public int GetAttackMultiplier(int x, int y, Faction faction)
         {
-            int attackingPopulation = GetAttackingForce(halfPopulation, faction);
-
-            if(map.CanOccupyTile(faction, attackingPopulation, x, y))
+            Tile[] neighbors = map.GetNeighborTiles(x, y);
+            int pow = 0;
+            foreach(Tile n in neighbors)
             {
-                map.OccupyTile(faction, attackingPopulation, x, y);
-                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
-                return true;
-            }else if (map.CanAttackTile(x, y, faction))
-            {
-                map.AttackTile(x, y, attackingPopulation);
-                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
-                return true;
-            }else if(map.tileMap[x][y].Faction.Equals(faction)){
-                map.AddPopulation(x, y, attackingPopulation);
-                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
-                return true;
+                if (n.Faction.Equals(faction))
+                {
+                    pow++;
+                }
             }
-            return false;
+            return (int)Math.Pow((double)2, (double)(pow - 1));
         }
 
-        public string AttackTileWithCoin(int x, int y, Faction faction)
+        public Tile[] AttackTile(int x, int y, bool halfPopulation, Faction faction)
         {
-            //TODO: There is currently no check if the coin captures a captital
-            if(!map.IsNeighbor(faction, x, y))
+            //Clicked on tile that is not a neighbor to a tile we own
+            if (!map.IsNeighbor(faction, x, y))
             {
                 return null;
             }
 
-            List<string> tiles = new List<string>();
-            List<Tile> updatedTiles = new List<Tile>();
-            Queue<Tile[]> tileToProcess = new Queue<Tile[]>();
-            tileToProcess.Enqueue(map.GetTilesFromCoin(x, y));
-            map.SetCoinOnTile(x, y, Coin.None);
+            //Prepare Attackforce and multiplier
+            int attackingPopulation = GetAttackingForce(halfPopulation, faction);
+            int neighborMultiplier = GetAttackMultiplier(x, y, faction);
 
-            while (tileToProcess.Any())
+            //Tile we try to Attack is a Capital
+            if(GetTileAtPosition(x, y).Type.Equals(TileType.Capital))
             {
-                foreach(Tile t in tileToProcess.Dequeue())
+                //Can overtake? Capture all enemy Tiles and remove faction from availables
+                if (map.CanOccupyTile(faction, attackingPopulation * neighborMultiplier, x, y))
                 {
-                    //Tile has a coin on it
-                    if (!t.Coin.Equals(Coin.None))
-                    {
-                        tileToProcess.Enqueue(map.GetTilesFromCoin(t.Coordinates.x, t.Coordinates.y));
-                    }
-                    if (updatedTiles.Contains(t))
-                    {
-                        continue;
-                    }
-                    //Update Tile and add to list
-                    map.SetTileToFaction(faction, t.Coordinates.x, t.Coordinates.y);
-                    map.SetCoinOnTile(t.Coordinates.x, t.Coordinates.y, Coin.None);
-                    updatedTiles.Add(t);
-                    tiles.Add(t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString());
+                    Faction removedFaction = GetTileAtPosition(x, y).Faction;
+                    List<Tile> updatedTiles = map.OvertakeEnemyTiles(faction, removedFaction);
+                    _faction.Remove(removedFaction);
+                    _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                    GameManager.Instance.GameEndedForFaction(removedFaction);
+                    return updatedTiles.ToArray();
+                }
+                //Can Attack? Just update the captital tile
+                if (map.CanAttackTile(x, y, faction))
+                {
+                    map.AttackTile(x, y, attackingPopulation * neighborMultiplier);
+                    _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                    Tile t = GetTileAtPosition(x, y);
+                    return new Tile[]{ t };
+                }
+                //Do we own the tile? Add Troops to the tile
+                if (map.tileMap[x][y].Faction.Equals(faction))
+                {
+                    map.AddPopulation(x, y, attackingPopulation * neighborMultiplier);
+                    _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                    Tile t = GetTileAtPosition(x, y);
+                    return new Tile[] { t };
                 }
             }
 
-            return String.Join(";", tiles);
-        }
-
-        public string AttackCapital(int x, int y, bool halfPopulation, Faction faction)
-        {
-            int attackPopulation = GetAttackingForce(halfPopulation, faction);
-            //Can overtake? Capture all enemy Tiles and remove faction from availables
-            if (CanOverTakeTile(x, y, halfPopulation, faction))
+            //Tile has a Coin on it
+            if(!GetTileAtPosition(x, y).Coin.Equals(Coin.None))
             {
-                Faction removedFaction = GetTileAtPosition(x, y).Faction;
-                List<Tile> updatedTiles = map.OvertakeEnemyTiles(faction, removedFaction);
-                List<string> tiles = new List<string>();
-                foreach(Tile t in updatedTiles)
+                //Not enough Troops to capture tile
+                if(!map.CanOccupyTile(faction, attackingPopulation  * neighborMultiplier, x, y))
                 {
-                    tiles.Add(t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString());
+                    map.AttackTile(x, y, attackingPopulation * neighborMultiplier);
+                    _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                    Tile t = GetTileAtPosition(x, y);
+                    return new Tile[] { t };
                 }
-                _faction.Remove(removedFaction);
-                GameManager.Instance.GameEndedForFaction(removedFaction);
-                return String.Join(";", tiles);
+
+                //Overtake Coin tile and set population on the surrounding tiles
+                int populationToSet = (attackingPopulation * neighborMultiplier) - GetTileAtPosition(x, y).Population;
+
+                List<Tile> updatedTiles = new List<Tile>();
+                Queue<Tile[]> tileToProcess = new Queue<Tile[]>();
+                tileToProcess.Enqueue(map.GetTilesFromCoin(x, y));
+                map.SetCoinOnTile(x, y, Coin.None);
+
+                while (tileToProcess.Any())
+                {
+                    foreach (Tile t in tileToProcess.Dequeue())
+                    {
+                        //Tile has a coin on it
+                        if (!t.Coin.Equals(Coin.None))
+                        {
+                            tileToProcess.Enqueue(map.GetTilesFromCoin(t.Coordinates.x, t.Coordinates.y));
+                        }
+                        if (updatedTiles.Contains(t))
+                        {
+                            continue;
+                        }
+                        //Update Tile and add to list
+                        map.SetTileToFaction(faction, t.Coordinates.x, t.Coordinates.y);
+                        map.SetCoinOnTile(t.Coordinates.x, t.Coordinates.y, Coin.None);
+                        map.SetPopulationOfTile(t.Coordinates.x, t.Coordinates.y, populationToSet);
+                        updatedTiles.Add(t);
+                    }
+                }
+                return updatedTiles.ToArray();
             }
-            //Can Attack? Just update the captital tile => Inefficient?
-            if(map.CanAttackTile(x, y, faction))
+
+            //Normal Tile
+            if (map.CanOccupyTile(faction, attackingPopulation * neighborMultiplier, x, y))
             {
-                map.AttackTile(x, y, attackPopulation);
-                Tile t = GetTileAtPosition(x, y);
-                return t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString();
+                map.OccupyTile(faction, attackingPopulation * neighborMultiplier, x, y);
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                return new Tile[] { GetTileAtPosition(x, y) };
             }
+            else if (map.CanAttackTile(x, y, faction))
+            {
+                map.AttackTile(x, y, attackingPopulation * neighborMultiplier);
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                return new Tile[] { GetTileAtPosition(x, y) };
+            }
+            else if (map.tileMap[x][y].Faction.Equals(faction))
+            {
+                map.AddPopulation(x, y, attackingPopulation * neighborMultiplier);
+                _freepopulation[faction] = _freepopulation[faction] - attackingPopulation;
+                return new Tile[] { GetTileAtPosition(x, y) };
+            }
+
+
             return null;
         }
 

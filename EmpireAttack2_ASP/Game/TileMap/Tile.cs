@@ -17,6 +17,7 @@
         public Faction Faction { get; set; }
         public bool IsConnected { get; set; }
         public bool IsVisited { get; set; }
+        public bool HasDiamond { get; set; }
         public int Population { get; set; }
         public TileType Type { get; set; }
         public Coin Coin { get; set; }
@@ -31,6 +32,10 @@
             this.Population = 1;
             this.Type = type;
             this.Coin = Coin.None;
+
+            this.HasDiamond = false;
+            this.IsConnected = false;
+            this.IsVisited = false;
         }
         public Tile(TileType type, int i, int j)
         {
@@ -39,6 +44,10 @@
             this.Population = 1;
             this.Type = type;
             this.Coin = Coin.None;
+
+            this.HasDiamond = false;
+            this.IsConnected = false;
+            this.IsVisited = false;
         }
 
         public Tile(TileType type, int i, int j, bool random)
@@ -60,6 +69,10 @@
                 case TileType.Forest: this.Population = r.Next(50, 150); break;
                 default: this.Population = 1; break;
             }
+
+            this.HasDiamond = false;
+            this.IsConnected = false;
+            this.IsVisited = false;
         }
 
         public Tile(Faction faction, int population, TileType type, Coin coin)
@@ -68,6 +81,10 @@
             this.Population = population;
             this.Type = type;
             this.Coin = coin;
+
+            this.HasDiamond = false;
+            this.IsConnected = false;
+            this.IsVisited = false;
         }
 
         #endregion Public Constructors

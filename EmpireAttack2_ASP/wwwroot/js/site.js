@@ -253,6 +253,10 @@ function updatePopulation(newPop) {
     mypopulation = newPop;
 }
 
+function updateTimer(time) {
+    document.getElementById("lb_timer").innerHTML = timer;
+}
+
 function addTintToTile(x, y) {
     gameMap[x][y].children[1].classList.remove("tileOverlayRed", "tileOverlayBlue", "tileOverlayGreen", "tileOverlayYellow");
     gameMap[x][y].children[0].classList.remove("coinBronze", "coinSilver", "coinGold");

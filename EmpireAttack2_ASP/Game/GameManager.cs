@@ -17,6 +17,7 @@ namespace EmpireAttack2_ASP.Game
         public Timer FastTick;
         public Timer SlowTick;
         public Timer GameTimer;
+        public DateTime gameStartTime;
         public const int SlowTimerMultiplier = 5;
         public const int GameTimeInMin = 10;
         public int NoOfFactions;
@@ -59,6 +60,13 @@ namespace EmpireAttack2_ASP.Game
             GameTimer = new Timer(GameTimerEnded, null, Timeout.Infinite, Timeout.Infinite);
         }
 
+        private double TimeLeft()
+        {
+            TimeSpan timeSpan = DateTime.Now - gameStartTime;
+            double gameTimeInSec = (double)GameTimeInMin * 60;
+            return gameTimeInSec - timeSpan.TotalSeconds;
+        }
+
         private void FastUpdate(object state)
         {
             //Add free population to factions and send changes
@@ -66,7 +74,7 @@ namespace EmpireAttack2_ASP.Game
             game.AddFreePopulationToAll(30);
             foreach(Faction f in game.GetAllFactions())
             {
-                GameHub.Current.Clients.Group(f.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(f));
+                GameHub.Current.Clients.Group(f.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(f), TimeLeft());
             }
         }
 
@@ -91,6 +99,8 @@ namespace EmpireAttack2_ASP.Game
             GameTimer.Change(1000 * GameTimeInMin * 60, 1000 * GameTimeInMin * 60);
             //Set Gamestate
             gamestate = Gamestate.InGame;
+            //Set time
+            gameStartTime = DateTime.Now;
         }
 
         private void CheckStartGame()
@@ -114,7 +124,6 @@ namespace EmpireAttack2_ASP.Game
             Initilize(NoOfFactions, webRootPath);
         }
 
-        //TODO: Check if capital and apply Overtake Enemy
         public async Task AttackTile(int x, int y, bool halfPopulation, string connectionID)
         {
             //Game is not running, should not accept input
@@ -122,39 +131,39 @@ namespace EmpireAttack2_ASP.Game
             {
                 return;
             }
-
+            //Save Attacking Players faction for later use
             Faction playerFaction = playerManager.GetFaction(connectionID);
 
-            if(game.GetTileAtPosition(x, y).GetShortType().Equals("C"))
+            //Let Game handle the attack
+            Tile[] updatedTiles = game.AttackTile(x, y, halfPopulation, playerFaction);
+
+            //No Tile updated
+            if(updatedTiles == null)
             {
-                //Capital Tile => Apply overtake Enemy modifier and end game if needed or disable Faction
-                string updatedTiles = game.AttackCapital(x, y, halfPopulation, playerFaction);
-                if (updatedTiles != null)
-                {
-                    await GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(updatedTiles));
-                }
-                //A Faction won, all others have been eliminated
-                if(game.GetAllFactions().Count == 1)
-                {
-                    await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_GameEnded", "Your Faction won! You were part of: ");
-                    EndGame();
-                }
+                return;
             }
-            else if (game.AttackTile(x, y, halfPopulation, playerFaction) && game.GetTileAtPosition(x, y).Coin.Equals(Coin.None))
+            //One Tile updated
+            if(updatedTiles.Length == 1)
             {
-                //Normal Attack
                 Tile t = game.GetTileAtPosition(x, y);
                 await GameHub.Current.Clients.All.SendAsync("Cl_TileUpdate", x, y, t.Faction.ToString(), t.Population, t.Coin.ToString());
-                await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(playerFaction));
+                await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(playerFaction), TimeLeft());
             }
-            else
+            //Multiple Tiles updated
+            List<string> tileStringList = new List<string>();
+            foreach(Tile t in updatedTiles)
             {
-                //Tile has Coin on it -> Use Coin first
-                string updatedTiles = game.AttackTileWithCoin(x, y, playerFaction);
-                if(updatedTiles != null)
-                {
-                    await GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(updatedTiles));
-                }
+                tileStringList.Add(t.Coordinates.x + "," + t.Coordinates.y + "," + t.Faction.ToString() + "," + t.Population + "," + t.Coin.ToString());
+            }
+            string updateString = string.Join(";", tileStringList);
+            await GameHub.Current.Clients.All.SendAsync("Cl_CompressedUpdate", GZIPCompress.Compress(updateString));
+            await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_FastTick", game.GetFreePopulationFromFaction(playerFaction), TimeLeft());
+
+            //A Faction won, all others have been eliminated
+            if (game.GetAllFactions().Count == 1)
+            {
+                await GameHub.Current.Clients.Group(playerFaction.ToString()).SendAsync("Cl_GameEnded", "Your Faction won! You were part of: ");
+                EndGame();
             }
         }
 

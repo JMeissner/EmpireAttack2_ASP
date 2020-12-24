@@ -131,6 +131,11 @@ namespace EmpireAttack2_ASP.Game.TileMap
             tileMap[x][y].Faction = faction;
         }
 
+        public void SetPopulationOfTile(int x, int y, int population)
+        {
+            tileMap[x][y].Population = population;
+        }
+
         public List<Tile> OvertakeEnemyTiles(Faction newf, Faction previous)
         {
             List<Tile> returnTiles = new List<Tile>();
@@ -278,6 +283,35 @@ namespace EmpireAttack2_ASP.Game.TileMap
             }
             _return += String.Join(";", _tiles);
             return _return;
+        }
+
+        public Tile[] GetNeighborTiles(int x, int y)
+        {
+            List<Tile> returnTiles = new List<Tile>();
+            int maxX = tileMap.Length;
+            int maxY = tileMap[0].Length;
+
+            //Up
+            if (x + 1 < maxX)
+            {
+                returnTiles.Add(tileMap[x + 1][y]);
+            }
+            //Down
+            if (x - 1 >= 0)
+            {
+                returnTiles.Add(tileMap[x - 1][y]);
+            }
+            //Right
+            if (y + 1 < maxY)
+            {
+                returnTiles.Add(tileMap[x][y + 1]);
+            }
+            //Left
+            if (y - 1 >= 0)
+            {
+                returnTiles.Add(tileMap[x][y - 1]);
+            }
+            return returnTiles.ToArray();
         }
 
         public void SetCoinOnTile(int x, int y, Coin coin)
