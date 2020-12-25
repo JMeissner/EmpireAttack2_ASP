@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\App_Data\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\App_Data\Maps\map_serialized.txt" />
   </ItemGroup>
 

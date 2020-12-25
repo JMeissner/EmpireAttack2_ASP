@@ -23,7 +23,7 @@ namespace EmpireAttack2_ASP.Game
             }
 
             //Load Map
-            string mapPath = Path.Combine("Maps", "map_serialized.txt");
+            string mapPath = Path.Combine("Maps", "map2_serialized.txt");
             map = new MapTextImport(mapPath);
 
             //set capitals of factions
