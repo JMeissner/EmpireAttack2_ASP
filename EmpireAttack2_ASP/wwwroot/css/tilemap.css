@@ -78,7 +78,9 @@
 }
 
 .tileUrban {
-    background-color: #c0392b;
+    /*background-color: #c0392b;*/
+    background-image: url("/Content/Tiles/Urban_1.jpg");
+    background-size: 50px 50px;
 }
 
 .tileCapital {

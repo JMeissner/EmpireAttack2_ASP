@@ -14,6 +14,7 @@ namespace EmpireAttack2_ASP.Hubs
         public async Task GetFactions()
         {
             await Clients.Caller.SendAsync("ReceiveFactions", GameManager.Instance.GetFactionsString());
+            await Clients.Caller.SendAsync("Cl_ConnectedPlayers", GameManager.Instance.GetPlayersString());
         }
 
         public async Task SendMessage(string user, string message)

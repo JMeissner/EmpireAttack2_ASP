@@ -7,6 +7,7 @@ using EmpireAttack2_ASP.Game.TileMap;
 using EmpireAttack2_ASP.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using EmpireAttack2_ASP.Utils;
+using System.Collections.Concurrent;
 
 namespace EmpireAttack2_ASP.Game
 {
@@ -60,6 +61,10 @@ namespace EmpireAttack2_ASP.Game
             GameTimer = new Timer(GameTimerEnded, null, Timeout.Infinite, Timeout.Infinite);
         }
 
+        /// <summary>
+        /// Calculates the time remaining in the gametimer in seconds
+        /// </summary>
+        /// <returns>Remaining gametime in seconds</returns>
         private double TimeLeft()
         {
             TimeSpan timeSpan = DateTime.Now - gameStartTime;
@@ -176,6 +181,23 @@ namespace EmpireAttack2_ASP.Game
         public string GetFactionsString()
         {
             return String.Join(':', game.GetAllFactions());
+        }
+
+        /// <summary>
+        /// Returns a string containing all connected players and their respective factions. Used to prime the playerlist on login
+        /// </summary>
+        /// <returns>nickname,faction - Seperator = ';'</returns>
+        public string GetPlayersString()
+        {
+            ConcurrentDictionary<string, string> players = playerManager.GetPlayers();
+            ConcurrentDictionary<string, Faction> factions = playerManager.GetFactions();
+            List<string> nickFaction = new List<string>();
+
+            foreach(string conID in players.Keys)
+            {
+                nickFaction.Add(players[conID] + "," + factions[conID]);
+            }
+            return string.Join(";", nickFaction);
         }
 
         public void AddPlayer(string connectionId, string nickname, string faction)

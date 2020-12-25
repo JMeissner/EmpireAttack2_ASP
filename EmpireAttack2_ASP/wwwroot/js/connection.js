@@ -68,6 +68,10 @@ function buildConnection() {
 
     });
 
+    connection.on("Cl_ConnectedPlayers", function (players) {
+        createPlayerList(players);
+    });
+
     connection.on("Cl_PlayerConnected", function (name, faction) {
 
     });

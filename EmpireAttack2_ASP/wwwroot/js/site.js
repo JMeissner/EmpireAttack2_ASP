@@ -241,7 +241,7 @@ function gridClicked(event) {
     var coords = event.srcElement.id.split(':');
 
     //gameMap[coords[0]][coords[1]].style.backgroundColor = "#2980b9";
-    console.log(coords[0] + coords[1] + tileMap[coords[0]][coords[1]].TileType + tileMap[coords[0]][coords[1]].Faction + tileMap[coords[0]][coords[1]].Population);
+    //console.log(coords[0] + coords[1] + tileMap[coords[0]][coords[1]].TileType + tileMap[coords[0]][coords[1]].Faction + tileMap[coords[0]][coords[1]].Population);
 
     connection.invoke("Sv_AttackTile", coords[0], coords[1], shiftDown).catch(function (err) {
         return console.error(err.toString());
@@ -300,12 +300,28 @@ function handleCompressedDelta(base64Data) {
     }
 }
 
+//Display connected Players in the login screen
+function createPlayerList(players) {
+    if (players == "") {
+        return;
+    }
+    var playerData = players.split(';');
+
+    for (var i = 0; i < playerData.length; i++) {
+        var player = playerData[i].split(',');
+        var playerElement = document.createElement("p");
+        playerElement.id = player[0];
+        playerElement.innerHTML = player[0] + ", Faction: " + player[1];
+        document.getElementById("players_online").appendChild(playerElement);
+    }
+}
+
 function gameEnded(reason) {
     $("#content").empty();
 
     $("#content").load("Results", function () {
         console.log("Game Ended");
         document.getElementById("lb_Reason").innerHTML = reason;
-        document.getElementById("lb_Faction").innerHTML = faction;
+        document.getElementById("lb_Faction").innerHTML = Player.faction;
     });
 }
