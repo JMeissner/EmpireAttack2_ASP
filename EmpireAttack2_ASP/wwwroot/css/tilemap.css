@@ -53,33 +53,123 @@
 
 /*TILETYPES*/
 
-.tileNormal {
+.tileNormal1 {
     /*background-color: #ecf0f1; */
     background-image: url("/Content/Tiles/Normal_1.jpg");
     background-size: 50px 50px;
 }
 
-.tileWater {
+.tileNormal2 {
+    /*background-color: #ecf0f1; */
+    background-image: url("/Content/Tiles/Normal_2.jpg");
+    background-size: 50px 50px;
+}
+
+.tileNormal3 {
+    /*background-color: #ecf0f1; */
+    background-image: url("/Content/Tiles/Normal_3.jpg");
+    background-size: 50px 50px;
+}
+
+.tileNormal4 {
+    /*background-color: #ecf0f1; */
+    background-image: url("/Content/Tiles/Normal_4.jpg");
+    background-size: 50px 50px;
+}
+
+.tileWater1 {
     /*background-color: #3498db;*/
     background-image: url("/Content/Tiles/Water_1.jpg");
     background-size: 50px 50px;
 }
 
-.tileForest {
+.tileWater2 {
+    /*background-color: #3498db;*/
+    background-image: url("/Content/Tiles/Water_2.jpg");
+    background-size: 50px 50px;
+}
+
+.tileWater3 {
+    /*background-color: #3498db;*/
+    background-image: url("/Content/Tiles/Water_3.jpg");
+    background-size: 50px 50px;
+}
+
+.tileWater4 {
+    /*background-color: #3498db;*/
+    background-image: url("/Content/Tiles/Water_4.jpg");
+    background-size: 50px 50px;
+}
+
+.tileForest1 {
     /*background-color: #27ae60;*/
     background-image: url("/Content/Tiles/Forest_1.jpg");
     background-size: 50px 50px;
 }
 
-.tileHills {
+.tileForest2 {
+    /*background-color: #27ae60;*/
+    background-image: url("/Content/Tiles/Forest_2.jpg");
+    background-size: 50px 50px;
+}
+
+.tileForest3 {
+    /*background-color: #27ae60;*/
+    background-image: url("/Content/Tiles/Forest_3.jpg");
+    background-size: 50px 50px;
+}
+
+.tileForest4 {
+    /*background-color: #27ae60;*/
+    background-image: url("/Content/Tiles/Forest_4.jpg");
+    background-size: 50px 50px;
+}
+
+.tileHills1 {
     /*background-color: #f1c40f;*/
     background-image: url("/Content/Tiles/Mountains_1.jpg");
     background-size: 50px 50px;
 }
 
-.tileUrban {
+.tileHills2 {
+    /*background-color: #f1c40f;*/
+    background-image: url("/Content/Tiles/Mountains_2.jpg");
+    background-size: 50px 50px;
+}
+
+.tileHills3 {
+    /*background-color: #f1c40f;*/
+    background-image: url("/Content/Tiles/Mountains_3.jpg");
+    background-size: 50px 50px;
+}
+
+.tileHills4 {
+    /*background-color: #f1c40f;*/
+    background-image: url("/Content/Tiles/Mountains_4.jpg");
+    background-size: 50px 50px;
+}
+
+.tileUrban1 {
     /*background-color: #c0392b;*/
     background-image: url("/Content/Tiles/Urban_1.jpg");
+    background-size: 50px 50px;
+}
+
+.tileUrban2 {
+    /*background-color: #c0392b;*/
+    background-image: url("/Content/Tiles/Urban_2.jpg");
+    background-size: 50px 50px;
+}
+
+.tileUrban3 {
+    /*background-color: #c0392b;*/
+    background-image: url("/Content/Tiles/Urban_3.jpg");
+    background-size: 50px 50px;
+}
+
+.tileUrban4 {
+    /*background-color: #c0392b;*/
+    background-image: url("/Content/Tiles/Urban_4.jpg");
     background-size: 50px 50px;
 }
 

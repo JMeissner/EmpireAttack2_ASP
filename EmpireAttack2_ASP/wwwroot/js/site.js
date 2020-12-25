@@ -175,15 +175,16 @@ function createTileElement(i, j) {
     text.innerHTML = "" + tileMap[i][j].Population;
     text.classList.add("tileText");
 
+    var rndmNbr = getRndInteger(1, 5);
 
     switch (tileMap[i][j].TileType) {
-        case "N": tileDiv.classList.add("tileNormal"); break;
-        case "W": tileDiv.classList.add("tileWater"); break;
-        case "F": tileDiv.classList.add("tileForest"); break;
-        case "H": tileDiv.classList.add("tileHills"); break;
-        case "U": tileDiv.classList.add("tileUrban"); break;
+        case "N": tileDiv.classList.add("tileNormal" + rndmNbr); break;
+        case "W": tileDiv.classList.add("tileWater" + rndmNbr); break;
+        case "F": tileDiv.classList.add("tileForest" + rndmNbr); break;
+        case "H": tileDiv.classList.add("tileHills" + rndmNbr); break;
+        case "U": tileDiv.classList.add("tileUrban" + rndmNbr); break;
         case "C": tileDiv.classList.add("tileCapital"); break;
-        default: tileDiv.classList.add("tileNormal"); console.error("Error occurred loading gameMap - Unknown TileType"); break;
+        default: tileDiv.classList.add("tileNormal" + rndmNbr); console.error("Error occurred loading gameMap - Unknown TileType"); break;
     }
     // </ Button setup >
 
@@ -324,4 +325,8 @@ function gameEnded(reason) {
         document.getElementById("lb_Reason").innerHTML = reason;
         document.getElementById("lb_Faction").innerHTML = Player.faction;
     });
+}
+
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
 }
